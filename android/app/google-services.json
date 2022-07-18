@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "160336544742",
+    "project_id": "find-your-phone-208e2",
+    "storage_bucket": "find-your-phone-208e2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:160336544742:android:5017d3f74a62df97834c27",
+        "android_client_info": {
+          "package_name": "com.example.find_your_phone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "160336544742-bl9duadu52t0ndm84e76057h1d4ujehu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.find_your_phone",
+            "certificate_hash": "da929a4069c93967c04b65ca549f6643de9d9eeb"
+          }
+        },
+        {
+          "client_id": "160336544742-osoh0ogmv6p3f9mvdo3dejp329bgrt7u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWhl22Vc-E7CoVkL54SCrjMepL9011j5I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "160336544742-osoh0ogmv6p3f9mvdo3dejp329bgrt7u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
