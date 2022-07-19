@@ -1,11 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:find_your_phone/model/admin_data.dart';
-import 'package:find_your_phone/model/found_phone.dart';
-import 'package:find_your_phone/shared/reusable_widgets/components.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../model/lost_phone.dart';
 import '../model/phone_data.dart';
 
 class FirebaseController extends GetxController {
@@ -95,6 +91,14 @@ class FirebaseController extends GetxController {
     }
   }
 
+  deleteDocument(String docId) async {
+    try {
+      await phonesRef.doc(docId).delete();
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<bool> verifyPhone(String docId, PhoneData phone) async {
     try {
       DocumentReference docRef = phonesRef.doc(docId);
@@ -137,6 +141,7 @@ class FirebaseController extends GetxController {
     return '';
   }
 
+  /// add admin to firebase
   Future<bool> addAdmin(Map<String, dynamic> admin) async {
     try {
       await adminRef.doc(adminDocId).update({
@@ -144,6 +149,19 @@ class FirebaseController extends GetxController {
       });
       return true;
     } catch (e) {
+      return false;
+    }
+  }
+
+  /// delete admin from firebase
+  Future<bool> deleteAdmin(AdminData admin) async {
+    try {
+      await adminRef.doc(adminDocId).update({
+        'admins_list': FieldValue.arrayRemove([AdminData.toJson(admin).json])
+      });
+      return true;
+    } catch (e) {
+      print(e);
       return false;
     }
   }

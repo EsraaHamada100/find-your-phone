@@ -17,8 +17,10 @@ import 'law_screen.dart';
 import 'setting_screen.dart';
 
 class SearchScreen extends StatefulWidget {
-  SearchScreen({required this.isLostPhonesScreen, Key? key}) : super(key: key);
-  bool? isLostPhonesScreen;
+  const SearchScreen({required this.isLostPhonesScreen, Key? key})
+      : super(key: key);
+  final bool? isLostPhonesScreen;
+
   @override
   State<SearchScreen> createState() => _SearchScreenState();
 }
@@ -32,7 +34,17 @@ class _SearchScreenState extends State<SearchScreen> {
   List<PhoneData> _resultsList = [];
   @override
   void initState() {
+    // that means we are in verify paying screen
+    // not in lost phones or found phones
     if (widget.isLostPhonesScreen == null) {
+      for (PhonesDocument phonesDocument
+          in _firebaseController.phonesDocuments) {
+        for (PhoneData phoneData in phonesDocument.phonesData) {
+          if (phoneData.paymentNumber != null) {
+            _allResults.add(phoneData);
+          }
+        }
+      }
     } else if (widget.isLostPhonesScreen!) {
       for (PhoneData phoneData in _firebaseController.lostPhones) {
         _allResults.add(phoneData);
@@ -64,11 +76,21 @@ class _SearchScreenState extends State<SearchScreen> {
   searchResultsList() {
     List<PhoneData> showResults = [];
     if (_searchController.text != "") {
-      for (PhoneData phone in _allResults) {
-        if (phone.IMME1.contains(_searchController.text) ||
-            (phone.IMME2 != null &&
-                phone.IMME2!.contains(_searchController.text))) {
-          showResults.add(phone);
+      if (widget.isLostPhonesScreen != null) {
+        for (PhoneData phone in _allResults) {
+          if (phone.IMME1.contains(_searchController.text) ||
+              (phone.IMME2 != null &&
+                  phone.IMME2!.contains(_searchController.text))) {
+            showResults.add(phone);
+          }
+        }
+      } else {
+        // that means we are searching in verify phone so we want
+        // to search by payment mobile number
+        for (PhoneData phone in _allResults) {
+          if (phone.paymentNumber!.contains(_searchController.text)) {
+            showResults.add(phone);
+          }
         }
       }
     } else {
@@ -111,7 +133,9 @@ class _SearchScreenState extends State<SearchScreen> {
                   controller: _searchController,
                   validator: (val) {},
                   icon: Icons.search,
-                  hint: 'اكتب ال IMME ',
+                  hint: widget.isLostPhonesScreen != null
+                      ? 'اكتب ال IMME '
+                      : 'اكتب رقم الهاتف الذى تمت منه عملية الدفع',
                   isPassword: false,
                 ),
                 SizedBox(height: 20),
@@ -121,10 +145,16 @@ class _SearchScreenState extends State<SearchScreen> {
                     children: [
                       for (PhoneData result in _resultsList)
                         GestureDetector(
-                          onTap: () => Get.to(() => PhoneDetailsScreen(
-                                phone: result,
-                                docId: _firebaseController.getDocId(result),
-                              )),
+                          onTap: () => Get.to(
+                            () => PhoneDetailsScreen(
+                              phone: result,
+                              docId: _firebaseController.getDocId(result),
+                              needVerification:
+                                  widget.isLostPhonesScreen == null
+                                      ? true
+                                      : false,
+                            ),
+                          ),
                           child: PhoneContainer(
                             phoneType: result.phoneType,
                             image: result.imageUrls.isNotEmpty

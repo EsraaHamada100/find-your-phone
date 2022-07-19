@@ -1,8 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:find_your_phone/control/admin_controller.dart';
 import 'package:find_your_phone/control/firebase_controller.dart';
+import 'package:find_your_phone/control/ui_controller.dart';
 import 'package:find_your_phone/model/found_phone.dart';
 import 'package:find_your_phone/model/phone_data.dart';
 import 'package:find_your_phone/shared/colors.dart';
+import 'package:find_your_phone/shared/enums.dart';
 import 'package:find_your_phone/shared/reusable_widgets/admin_widgets/admin_components.dart';
 import 'package:find_your_phone/shared/reusable_widgets/components.dart';
 import 'package:find_your_phone/shared/reusable_widgets/phones_list.dart';
@@ -23,9 +27,32 @@ import '../add_phone.dart';
 class AdminsScreen extends StatelessWidget {
   AdminsScreen({Key? key}) : super(key: key);
   var scaffoldKey = GlobalKey<ScaffoldState>();
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
   // BottomBarButtons buttonTapped = BottomBarButtons.Home;
   final FirebaseController _firebaseController = Get.find<FirebaseController>();
   final AdminController _adminController = Get.find<AdminController>();
+  final UIController _uiController = Get.find<UIController>();
+
+  deleteAdmin(BuildContext context,AdminData admin) async{
+    Get.back();
+    showLoading(context);
+    bool result =
+    await _adminController.deleteAdmin(admin);
+    Get.back();
+    if (result) {
+      showToast(
+        context,
+        'تم الحذف بنجاح',
+        ToastStates.success,
+      );
+    } else {
+      showToast(
+        context,
+        'حدث خطأ أثناء الحذف برجاء المحاوله لاحقًا',
+        ToastStates.error,
+      );
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -43,48 +70,64 @@ class AdminsScreen extends StatelessWidget {
           body: SafeArea(
             child: Padding(
               padding:
-                  EdgeInsets.only(bottom: 40, right: 20, left: 20, top: 20),
+                  EdgeInsets.only(bottom: 60, right: 20, left: 20, top: 10),
               child: Container(
                 width: double.maxFinite,
-                child: Column(
-                  children: [
-                    Obx(
-                      () => ListView(
-                        shrinkWrap: true,
-                        children: [
-                          for (AdminData admin in _adminController.admins)
-                            GestureDetector(
-                              onTap: () {
-
+                child: Obx(
+                  () => ListView(
+                    shrinkWrap: true,
+                    children: [
+                      for (AdminData admin in _adminController.admins)
+                        GestureDetector(
+                          onTap: () {},
+                          onLongPress: () async {
+                            customAlertDialog(
+                              context,
+                              title: 'حذف المشرف',
+                              content: 'هل أنت متأكد من أنك تريد حذف المشرف ؟',
+                              confirmFunction: () {
+                                deleteAdmin(context, admin);
                               },
-                              onLongPress: () {},
-                              child: AdminContainer(
-                                name: admin.name,
-                                email: admin.email,
-                                id: admin.id,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
+                            );
+
+                          },
+                          child: AdminContainer(
+                            name: admin.name,
+                            email: admin.email,
+                            id: admin.id,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         ),
         // body:
-        floatingActionButton: Padding(
-          padding: EdgeInsets.all(20),
-          child: FloatingActionButton(
-            elevation: 5,
-            child: Icon(Icons.add),
-            onPressed: () {
-              addAdminBottomSheet(
-                  context, scaffoldKey, () {});
-            },
-          ),
-        ),
+        floatingActionButton: GetBuilder<UIController>(builder: (_) {
+          return Padding(
+            padding: EdgeInsets.all(20),
+            child: FloatingActionButton(
+              elevation: 5,
+              child: Icon(_uiController.addAdminFloatingButton
+                  ? Icons.add
+                  : Icons.close),
+              onPressed: () {
+                if (_uiController.addAdminFloatingButton) {
+                  addAdminBottomSheet(
+                    context,
+                    scaffoldKey,
+                    formKey,
+                  );
+                } else {
+                  Get.back();
+                }
+                _uiController.changeAddAdminFloatingButton();
+              },
+            ),
+          );
+        }),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         // bottomNavigationBar: Container(
         //   // height: MediaQuery.of(context).size,

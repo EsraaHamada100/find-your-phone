@@ -20,11 +20,19 @@ class AdminData {
   late String id;
   late String name;
   late String email;
+  Map<String, Object> json = <String, Object>{};
+  AdminData(this.id, this.name, this.email);
   AdminData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     email = json['email'];
   }
+  AdminData.toJson(AdminData admin){
+    json['id'] = admin.id;
+    json['name'] = admin.name;
+    json['email'] = admin.email;
+  }
+
 }
 
 class LegalActionData {

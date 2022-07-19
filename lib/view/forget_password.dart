@@ -112,9 +112,7 @@ class ForgetPasswordScreen extends StatelessWidget {
                             if (val == null) {
                               return "اكتب بريدك الإلكترونى";
                             }
-                            if (val.length > 100 ||
-                                val.length < 2 ||
-                                !EmailValidator.validate(val)) {
+                            if (!EmailValidator.validate(val)) {
                               return "اكتب بريد الكترونى صالح";
                             }
                             return null;

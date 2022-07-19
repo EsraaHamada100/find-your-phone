@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import '../enums.dart';
 import 'custom_sign_input_field.dart';
 
-enum ToastStates { error, success }
+
 
 showLoading(context) {
   return showDialog(

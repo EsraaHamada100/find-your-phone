@@ -1,3 +1,4 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:find_your_phone/control/sign_controller.dart';
 import 'package:find_your_phone/shared/colors.dart';
 import 'package:find_your_phone/shared/reusable_widgets/custom_sign_input_field.dart';
@@ -244,10 +245,7 @@ class SignUpScreen extends StatelessWidget {
                             if (val == null) {
                               return "اكتب بريدك الإلكترونى";
                             }
-                            if (val.length > 100) {
-                              return "اكتب بريد الكترونى صالح";
-                            }
-                            if (val.length < 2) {
+                            if(!EmailValidator.validate(val)){
                               return "اكتب بريد الكترونى صالح";
                             }
                             return null;

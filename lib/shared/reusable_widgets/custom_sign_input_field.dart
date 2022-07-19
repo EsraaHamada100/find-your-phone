@@ -88,14 +88,14 @@ class CustomSignInputField extends StatelessWidget {
       required this.validator,
       required this.icon,
       required this.hint,
-      required this.isPassword})
+      this.isPassword})
       : super(key: key);
   final TextEditingController? controller;
   final void Function(String?)? onSaved;
   final String? Function(String?)? validator;
   final IconData icon;
   final String hint;
-  final bool isPassword;
+  bool? isPassword;
   bool obscureText;
   SignController _signController = Get.find<SignController>();
   @override
@@ -107,8 +107,8 @@ class CustomSignInputField extends StatelessWidget {
         validator: validator,
         decoration: InputDecoration(
           prefixIcon: Icon(icon),
-          suffixIcon: isPassword
-              ? IconButton(
+          suffixIcon: isPassword != null && isPassword!
+            ? IconButton(
                   onPressed: ()=>_signController.changeVisibility(),
                   icon: Icon(_signController.isVisible
                       ? Icons.visibility_off_outlined
@@ -119,7 +119,7 @@ class CustomSignInputField extends StatelessWidget {
             borderSide: BorderSide(width: 1),
           ),
         ),
-        obscureText: (isPassword && !_signController.isVisible) ? true : obscureText,
+        obscureText: (isPassword != null && isPassword! && !_signController.isVisible) ? true : obscureText,
       );
     });
   }

@@ -43,7 +43,7 @@ class CustomAppBar extends StatelessWidget {
         onPressed: () => Scaffold.of(context).openDrawer(),
       ),
       actions: [
-        searchable || isLostPhonesScreen!= null
+        searchable || isLostPhonesScreen != null
             ? IconButton(
                 onPressed: () => Get.to(() =>
                     SearchScreen(isLostPhonesScreen: isLostPhonesScreen)),

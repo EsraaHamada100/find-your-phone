@@ -32,9 +32,30 @@ class AdminController extends GetxController{
     print('adminsData');
     print(admins);
     print(id);
-    admins.forEach((admin) {
+    admins.forEach((admin) async {
       if (admin.id == id) {
         _isAdmin = true;
+
+        // the data is all in and I will write here a function that
+        // will delete every phone exceeds one year after it's publish
+        final DateTime now = DateTime.now();
+        if(now.day == 1){
+          for (PhonesDocument doc in _firebaseController.phonesDocuments) {
+            // delete empty phone documents
+            if(doc.phonesData.isEmpty){
+              await _firebaseController.deleteDocument(doc.id);
+              continue;
+            }
+            for (PhoneData phone in doc.phonesData) {
+              List<String> date = phone.addedDate.split('-');
+              int year = int.parse(date[0]);
+              int month = int.parse(date[1]);
+              if(now.year > year && (now.month >= month) ){
+                _firebaseController.deletePhoneFromFirebase(doc.id, phone);
+              }
+            }
+          }
+        }
       }
     });
   }
@@ -58,7 +79,19 @@ class AdminController extends GetxController{
       'email' : email,
     };
     bool result = await _firebaseController.addAdmin(newAdmin);
+    if(result){
+      AdminData admin = AdminData(id, name, email);
+      admins.add(admin);
+    }
 
+    return result;
+  }
+
+  Future<bool> deleteAdmin(AdminData admin) async {
+    bool result = await _firebaseController.deleteAdmin(admin);
+    if(result){
+      admins.remove(admin);
+    }
     return result;
   }
 

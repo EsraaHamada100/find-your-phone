@@ -13,6 +13,8 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 
+import '../shared/enums.dart';
+
 class PhoneDetailsScreen extends StatelessWidget {
   PhoneDetailsScreen({
     Key? key,
