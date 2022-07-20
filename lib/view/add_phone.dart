@@ -81,268 +81,265 @@ class AddPhone extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Obx(
-                () => Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: 170,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              if (_controller.imagesFileList.isEmpty)
-                                OutlinedButton.icon(
-                                  style: ButtonStyle(
-                                    foregroundColor: MaterialStateProperty.all(
-                                        Colors.indigo[300]),
-                                  ),
-                                  onPressed: () {
-                                    _controller.pickPhoneImages();
-                                  },
-                                  label: Text('Upload phone images'),
-                                  icon: Icon(Icons.upload),
+                () => SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 170,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (_controller.imagesFileList.isEmpty)
+                              OutlinedButton.icon(
+                                style: ButtonStyle(
+                                  foregroundColor: MaterialStateProperty.all(
+                                      Colors.indigo[300]),
                                 ),
-                              if (_controller.imagesFileList.isNotEmpty)
-                                Container(
-                                  width: double.maxFinite,
-                                  height: 120,
-                                  child: GridView.builder(
-                                    itemCount:
-                                        _controller.imagesFileList.length,
-                                    gridDelegate:
-                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3,
-                                      crossAxisSpacing: 3,
-                                    ),
-                                    itemBuilder: (_, int index) {
-                                      return Image.file(
-                                        File(_controller
-                                            .imagesFileList[index].path),
-                                        fit: BoxFit.cover,
-                                      );
-                                    },
-                                  ),
-                                ),
-                              if (_controller.imagesFileList.isNotEmpty)
-                                // buttons to change and remove images
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    OutlinedButton.icon(
-                                      style: ButtonStyle(
-                                        foregroundColor:
-                                            MaterialStateProperty.all(
-                                                Colors.indigo[400]),
-                                        fixedSize: MaterialStateProperty.all(
-                                          Size(150, 30),
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        _controller.pickPhoneImages();
-                                      },
-                                      label: Text('تغير الصور'),
-                                      icon: Icon(Icons.change_circle_outlined),
-                                    ),
-                                    OutlinedButton.icon(
-                                      style: ButtonStyle(
-                                        foregroundColor:
-                                            MaterialStateProperty.all(
-                                                Colors.indigo[400]),
-                                        fixedSize: MaterialStateProperty.all(
-                                          Size(150, 30),
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        _controller.clearPhoneImages();
-                                      },
-                                      label: Text('حذف الصور'),
-                                      icon: Icon(Icons.delete_outline),
-                                    ),
-                                  ],
-                                ),
-                            ],
-                          ),
-                        ),
-                        Form(
-                          key: formKey,
-                          child: Column(
-                            children: [
-                              AddPhoneInputField(
-                                onSaved: (val) {
-                                  if (val != null && val.trim() != '') {
-                                    type = val.trim();
-                                  }
-                                },
-                                validator: (val) {
-                                  if (val == null || val.trim() == '') {
-                                    return 'ادخل نوع الهاتف';
-                                  }
-                                  return null;
-                                },
-                                title: "نوع الهاتف",
-                                hint: "اكتب نوع هاتفك",
-                              ),
-                              AddPhoneInputField(
-                                arabicText: true,
-                                onSaved: (val) {
-                                  if (val != null && val.trim() != '') {
-                                    description = val.trim();
-                                  }
-                                },
-                                title: "الوصف",
-                                hint: "اكتب وصف لهاتفك",
-                              ),
-                              AddPhoneInputField(
-                                onSaved: (val) {
-                                  if (val != null && val.trim() != '') {
-                                    IMME1 = val.trim();
-                                  }
-                                },
-                                validator: (val) {
-                                  if (val == null || val.trim() == '') {
-                                    return 'يجب إدخال الرقم التسلسلى IMME';
-                                  }
-                                  if (val.trim().length != 15) {
-                                    return 'IMME يجب أن يكون مكون من 15 رمزًا';
-                                  }
-                                  return null;
-                                },
-                                title: " الرقم التسلسلي " " IMEI1 : ",
-                                hint: "اكتب الرقم التسلسلى لهاتفك",
-                              ),
-                              AddPhoneInputField(
-                                onSaved: (val) {
-                                  if (val != null && val.trim() != '') {
-                                    IMME2 = val.trim();
-                                  }
-                                },
-                                validator: (val) {
-                                  if (val == null || val.trim() == '') {
-                                    return null;
-                                  } else if (val.trim().length != 15) {
-                                    return 'IMME يجب أن يكون مكون من 15 رمزًا';
-                                  }
-                                  return null;
-                                },
-                                title: " الرقم التسلسلي " " IMEI2 : ",
-                                hint:
-                                    " اكتب الرقم التسلسلى الثانى لهاتفك إن وجد",
-                              ),
-                              Divider(),
-                              SizedBox(height: 30),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 10),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: defaultColor,
-                                ),
-                                child: Text(
-                                  'معلومات التواصل',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline6!
-                                      .copyWith(color: secondaryColor),
-                                ),
-                              ),
-                              AddPhoneInputField(
-                                onSaved: (val) {
-                                  if (val != null && val.trim() != '') {
-                                    phoneNumber = val.trim();
-                                  }
-                                },
-                                validator: (val) {
-                                  if (val == null || val.trim() == '') {
-                                    return 'أكتب رقم هاتف للتواصل';
-                                  }
-                                  if (val.trim().length < 4 ||
-                                      val.trim().length > 20) {
-                                    return 'رقم هاتف غير صالح';
-                                  }
-                                  return null;
-                                },
-                                title: "رقم الهاتف",
-                                hint: " اكتب رقم هاتفك للتواصل",
-                              ),
-                              AddPhoneInputField(
-                                onSaved: (val) {
-                                  if (val != null && val.trim() != '') {
-                                    whatsAppNumber = val.trim();
-                                  }
-                                },
-                                validator: (val) {
-                                  if (val == null || val.trim() == '') {
-                                    return null;
-                                  }
-                                  if (val.trim().length < 4 ||
-                                      val.trim().length > 20) {
-                                    return 'رقم هاتف غير صالح';
-                                  }
-                                  if (val.trim()[0] != '+') {
-                                    return 'اكتب كود الدوله قبل رقم الهاتف';
-                                  }
-                                  return null;
-                                },
-                                title: "رقم الواتساب",
-                                hint: "اكتب رقم يوجد عليه حساب واتساب",
-                              ),
-                              AddPhoneInputField(
-                                onSaved: (val) {
-                                  if (val != null && val.trim() != '') {
-                                    facebookAccount = val.trim();
-                                  }
-                                },
-                                // https://www.facebook.com
-                                validator: (val) {
-                                  if (val == null || val.trim() == '') {
-                                    return null;
-                                  }
-                                  if (val
-                                      .trim()
-                                      .startsWith('https://www.facebook.com')) {
-                                    return null;
-                                  }
-                                  return 'لينك حساب الفيسبوك غير صحيح إذا كنت لا تمتلك واحدًا يمكنك ترك الحقل فارغًا';
-                                },
-                                title: "حساب الفيسبوك",
-                                hint: "ضع لينك حساب الفيسبوك هنا",
-                              ),
-                              SizedBox(height: 40),
-                              CustomButton(
-                                text: 'أضف الهاتف',
                                 onPressed: () {
-                                  if (validateData()) {
-                                    if (_adminController.isAdmin) {
-                                      addPhoneData(context);
-                                    } else {
-                                      customAlertDialog(
-                                        context,
-                                        title: 'إضافة هاتف',
-                                        content:
-                                            'يجب دفع مبلغ 10 جنيه لإضافة هاتفك,'
-                                            ' هل تريد إكمال عملية الإضافة ؟',
-                                        confirmFunction: () {
-                                          Get.back();
-                                          paymentBottomSheet(
-                                            context,
-                                            () => vodafonePayment(context),
-                                          );
-                                        },
-                                      );
-                                    }
-                                  }
-                                  // paymentBottomSheet(context);
-                                  // addPhoneData(context);
+                                  _controller.pickPhoneImages();
                                 },
+                                label: Text('Upload phone images'),
+                                icon: Icon(Icons.upload),
                               ),
-                            ],
-                          ),
+                            if (_controller.imagesFileList.isNotEmpty)
+                              Container(
+                                width: double.maxFinite,
+                                height: 120,
+                                child: GridView.builder(
+                                  itemCount: _controller.imagesFileList.length,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3,
+                                    crossAxisSpacing: 3,
+                                  ),
+                                  itemBuilder: (_, int index) {
+                                    return Image.file(
+                                      File(_controller
+                                          .imagesFileList[index].path),
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
+                                ),
+                              ),
+                            if (_controller.imagesFileList.isNotEmpty)
+                              // buttons to change and remove images
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  OutlinedButton.icon(
+                                    style: ButtonStyle(
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.indigo[400]),
+                                      fixedSize: MaterialStateProperty.all(
+                                        Size(150, 30),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      _controller.pickPhoneImages();
+                                    },
+                                    label: Text('تغير الصور'),
+                                    icon: Icon(Icons.change_circle_outlined),
+                                  ),
+                                  OutlinedButton.icon(
+                                    style: ButtonStyle(
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.indigo[400]),
+                                      fixedSize: MaterialStateProperty.all(
+                                        Size(150, 30),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      _controller.clearPhoneImages();
+                                    },
+                                    label: Text('حذف الصور'),
+                                    icon: Icon(Icons.delete_outline),
+                                  ),
+                                ],
+                              ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      Form(
+                        key: formKey,
+                        child: Column(
+                          children: [
+                            AddPhoneInputField(
+                              onSaved: (val) {
+                                if (val != null && val.trim() != '') {
+                                  type = val.trim();
+                                }
+                              },
+                              validator: (val) {
+                                if (val == null || val.trim() == '') {
+                                  return 'ادخل نوع الهاتف';
+                                }
+                                return null;
+                              },
+                              title: "نوع الهاتف",
+                              hint: "اكتب نوع هاتفك",
+                            ),
+                            AddPhoneInputField(
+                              arabicText: true,
+                              onSaved: (val) {
+                                if (val != null && val.trim() != '') {
+                                  description = val.trim();
+                                }
+                              },
+                              title: "الوصف",
+                              hint: "اكتب وصف لهاتفك",
+                            ),
+                            AddPhoneInputField(
+                              onSaved: (val) {
+                                if (val != null && val.trim() != '') {
+                                  IMME1 = val.trim();
+                                }
+                              },
+                              validator: (val) {
+                                if (val == null || val.trim() == '') {
+                                  return 'يجب إدخال الرقم التسلسلى IMME';
+                                }
+                                if (val.trim().length != 15) {
+                                  return 'IMME يجب أن يكون مكون من 15 رمزًا';
+                                }
+                                return null;
+                              },
+                              title: " الرقم التسلسلي " " IMEI1 : ",
+                              hint: "اكتب الرقم التسلسلى لهاتفك",
+                            ),
+                            AddPhoneInputField(
+                              onSaved: (val) {
+                                if (val != null && val.trim() != '') {
+                                  IMME2 = val.trim();
+                                }
+                              },
+                              validator: (val) {
+                                if (val == null || val.trim() == '') {
+                                  return null;
+                                } else if (val.trim().length != 15) {
+                                  return 'IMME يجب أن يكون مكون من 15 رمزًا';
+                                }
+                                return null;
+                              },
+                              title: " الرقم التسلسلي " " IMEI2 : ",
+                              hint: " اكتب الرقم التسلسلى الثانى لهاتفك إن وجد",
+                            ),
+                            Divider(),
+                            SizedBox(height: 30),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: defaultColor,
+                              ),
+                              child: Text(
+                                'معلومات التواصل',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6!
+                                    .copyWith(color: secondaryColor),
+                              ),
+                            ),
+                            AddPhoneInputField(
+                              onSaved: (val) {
+                                if (val != null && val.trim() != '') {
+                                  phoneNumber = val.trim();
+                                }
+                              },
+                              validator: (val) {
+                                if (val == null || val.trim() == '') {
+                                  return 'أكتب رقم هاتف للتواصل';
+                                }
+                                if (val.trim().length < 4 ||
+                                    val.trim().length > 20) {
+                                  return 'رقم هاتف غير صالح';
+                                }
+                                return null;
+                              },
+                              title: "رقم الهاتف",
+                              hint: " اكتب رقم هاتفك للتواصل",
+                            ),
+                            AddPhoneInputField(
+                              onSaved: (val) {
+                                if (val != null && val.trim() != '') {
+                                  whatsAppNumber = val.trim();
+                                }
+                              },
+                              validator: (val) {
+                                if (val == null || val.trim() == '') {
+                                  return null;
+                                }
+                                if (val.trim().length < 4 ||
+                                    val.trim().length > 20) {
+                                  return 'رقم هاتف غير صالح';
+                                }
+                                if (val.trim()[0] != '+') {
+                                  return 'اكتب كود الدوله قبل رقم الهاتف';
+                                }
+                                return null;
+                              },
+                              title: "رقم الواتساب",
+                              hint: "اكتب رقم يوجد عليه حساب واتساب",
+                            ),
+                            AddPhoneInputField(
+                              onSaved: (val) {
+                                if (val != null && val.trim() != '') {
+                                  facebookAccount = val.trim();
+                                }
+                              },
+                              // https://www.facebook.com
+                              validator: (val) {
+                                if (val == null || val.trim() == '') {
+                                  return null;
+                                }
+                                if (val
+                                    .trim()
+                                    .startsWith('https://www.facebook.com')) {
+                                  return null;
+                                }
+                                return 'لينك حساب الفيسبوك غير صحيح إذا كنت لا تمتلك واحدًا يمكنك ترك الحقل فارغًا';
+                              },
+                              title: "حساب الفيسبوك",
+                              hint: "ضع لينك حساب الفيسبوك هنا",
+                            ),
+                            SizedBox(height: 40),
+                            CustomButton(
+                              text: 'أضف الهاتف',
+                              onPressed: () {
+                                if (validateData()) {
+                                  if (_adminController.isAdmin ||
+                                      _adminController.adminDocument!.isFree) {
+                                    addPhoneData(context);
+                                  } else {
+                                    customAlertDialog(
+                                      context,
+                                      title: 'إضافة هاتف',
+                                      content:
+                                          'يجب دفع مبلغ 10 جنيه لإضافة هاتفك,'
+                                          ' هل تريد إكمال عملية الإضافة ؟',
+                                      confirmFunction: () {
+                                        Get.back();
+                                        paymentBottomSheet(
+                                          context,
+                                          () => vodafonePayment(context),
+                                        );
+                                      },
+                                    );
+                                  }
+                                }
+                                // paymentBottomSheet(context);
+                                // addPhoneData(context);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -353,86 +350,17 @@ class AddPhone extends StatelessWidget {
     );
   }
 
-  // paymentBottomSheet(BuildContext context) {
-  //   return showModalBottomSheet(
-  //     context: context,
-  //     builder: (_) {
-  //       return Container(
-  //         height: MediaQuery.of(context).size.height * 0.3,
-  //         padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-  //         child: Column(
-  //           mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //           children: [
-  //             Text(
-  //               'اختر طريقة دفع',
-  //               style: TextStyle(
-  //                 fontWeight: FontWeight.w600,
-  //                 fontSize: 20,
-  //               ),
-  //             ),
-  //             Row(
-  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //               crossAxisAlignment: CrossAxisAlignment.center,
-  //               children: [
-  //                 paymentCard(
-  //                   'assets/images/vodafone_icon.svg',
-  //                   'Vodafone Cash',
-  //                   () {
-  //                     vodafonePayment(context);
-  //                   },
-  //                 ),
-  //                 SizedBox(width: 20),
-  //                 paymentCard(
-  //                   'assets/images/google_icon.svg',
-  //                   'Google Pay',
-  //                   () {
-  //                     addPhoneData(context);
-  //                   },
-  //                 ),
-  //               ],
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-  //
-  // paymentCard(String svgAssetImage, String text, dynamic Function()? onTap) {
-  //   return Expanded(
-  //     child: GestureDetector(
-  //       onTap: onTap,
-  //       child: Card(
-  //         elevation: 5,
-  //         child: Padding(
-  //           padding: EdgeInsets.all(10),
-  //           child: Column(
-  //             children: [
-  //               SvgPicture.asset(
-  //                 svgAssetImage,
-  //                 width: 75,
-  //                 height: 75,
-  //               ),
-  //               const SizedBox(
-  //                 height: 10,
-  //               ),
-  //               Text(text),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
   vodafonePayment(BuildContext context) {
     return showModalBottomSheet(
         // mainAxisSize: MainAxisSize.min,
         context: context,
         isScrollControlled: true, // only work on showModalBottomSheet function
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15), topRight: Radius.circular(15))),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15),
+            topRight: Radius.circular(15),
+          ),
+        ),
         builder: (_) {
           return Directionality(
             textDirection: TextDirection.rtl,
@@ -445,7 +373,7 @@ class AddPhone extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'أرسل 10 جنيه لهذا الرقم   01154989491',
+                      'أرسل ${_adminController.adminDocument!.paymentAmount} جنيه لهذا الرقم   ${_adminController.adminDocument!.paymentNumber}',
                       style: TextStyle(
                           fontWeight: FontWeight.w600,
                           wordSpacing: 10,

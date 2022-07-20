@@ -1,10 +1,12 @@
 class AdminDocument {
   late bool isFree;
   late String paymentNumber;
+  late double paymentAmount;
   List<AdminData> admins = [];
   List<LegalActionData> legalActions = [];
   AdminDocument.fromJson(Map<String, dynamic> json) {
     isFree = json['free'];
+    paymentAmount = json['payment_amount'];
     paymentNumber = json['payment_number'];
     json['admins_list'].forEach((admin) {
       admins.add(AdminData.fromJson(admin));

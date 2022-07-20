@@ -1,3 +1,4 @@
+import 'package:find_your_phone/control/admin_controller.dart';
 import 'package:find_your_phone/shared/colors.dart';
 import 'package:find_your_phone/shared/reusable_widgets/app_bar.dart';
 import 'package:find_your_phone/shared/reusable_widgets/custom_button.dart';
@@ -13,8 +14,9 @@ import 'lost_phones_screen.dart';
 
 class SupportUsScreen extends StatelessWidget {
   SupportUsScreen({Key? key}) : super(key: key);
-  ScrollController _scrollController =
-      ScrollController(initialScrollOffset: 1.0);
+  // ScrollController _scrollController =
+  //     ScrollController(initialScrollOffset: 1.0);
+  final AdminController _adminController = Get.find<AdminController>();
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -85,9 +87,12 @@ class SupportUsScreen extends StatelessWidget {
       // mainAxisSize: MainAxisSize.min,
       context: context,
       isScrollControlled: true, // only work on showModalBottomSheet function
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(15), topRight: Radius.circular(15))),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15),
+          topRight: Radius.circular(15),
+        ),
+      ),
       builder: (_) {
         return Directionality(
           textDirection: TextDirection.rtl,
@@ -98,7 +103,7 @@ class SupportUsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'أرسل المبلغ الذى ترغب بالتبرع به لهذا الرقم   01154989491',
+                  'أرسل المبلغ الذى ترغب بالتبرع به لهذا الرقم  ${_adminController.adminDocument!.paymentNumber}',
                   style: TextStyle(
                       fontWeight: FontWeight.w600,
                       wordSpacing: 10,
@@ -143,7 +148,6 @@ class SupportUsScreen extends StatelessWidget {
                         onPressed: () {
                           Get.back();
                           Get.back();
-
                         },
                         child: const Text('إلغاء'),
                       ),

@@ -80,24 +80,26 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CustomSignInputField extends StatelessWidget {
-  CustomSignInputField(
-      {Key? key,
-      this.controller,
-      this.onSaved,
-        this.obscureText = false,
-      required this.validator,
-      required this.icon,
-      required this.hint,
-      this.isPassword})
-      : super(key: key);
+  CustomSignInputField({
+    Key? key,
+    this.controller,
+    this.onSaved,
+    this.obscureText = false,
+    required this.validator,
+    required this.icon,
+    required this.hint,
+    this.isPassword,
+    this.keyboardType,
+  }) : super(key: key);
   final TextEditingController? controller;
   final void Function(String?)? onSaved;
   final String? Function(String?)? validator;
   final IconData icon;
   final String hint;
   bool? isPassword;
+  TextInputType? keyboardType;
   bool obscureText;
-  SignController _signController = Get.find<SignController>();
+  final SignController _signController = Get.find<SignController>();
   @override
   Widget build(BuildContext context) {
     return GetBuilder<SignController>(builder: (_) {
@@ -105,11 +107,12 @@ class CustomSignInputField extends StatelessWidget {
         controller: controller,
         onSaved: onSaved,
         validator: validator,
+        keyboardType: keyboardType,
         decoration: InputDecoration(
           prefixIcon: Icon(icon),
           suffixIcon: isPassword != null && isPassword!
-            ? IconButton(
-                  onPressed: ()=>_signController.changeVisibility(),
+              ? IconButton(
+                  onPressed: () => _signController.changeVisibility(),
                   icon: Icon(_signController.isVisible
                       ? Icons.visibility_off_outlined
                       : Icons.visibility_outlined))
@@ -119,7 +122,10 @@ class CustomSignInputField extends StatelessWidget {
             borderSide: BorderSide(width: 1),
           ),
         ),
-        obscureText: (isPassword != null && isPassword! && !_signController.isVisible) ? true : obscureText,
+        obscureText:
+            (isPassword != null && isPassword! && !_signController.isVisible)
+                ? true
+                : obscureText,
       );
     });
   }

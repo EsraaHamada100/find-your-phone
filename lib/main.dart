@@ -63,6 +63,7 @@ Future<void> main() async {
 
 
   }else {
+    print('user is null');
     isLogin = false;
   }
   // if (user == null) {

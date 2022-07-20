@@ -170,11 +170,11 @@ paymentBottomSheet(BuildContext context, dynamic Function()? onTap) {
     builder: (_) {
       return Container(
         height: MediaQuery.of(context).size.height * 0.3,
-        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Text(
+            const Text(
               'اختر طريقة دفع',
               style: TextStyle(
                 fontWeight: FontWeight.w600,
@@ -190,7 +190,7 @@ paymentBottomSheet(BuildContext context, dynamic Function()? onTap) {
                   'Vodafone Cash',
                   onTap,
                 ),
-                SizedBox(width: 20),
+                const SizedBox(width: 20),
                 paymentCard(
                   'assets/images/google_icon.svg',
                   'Google Pay',

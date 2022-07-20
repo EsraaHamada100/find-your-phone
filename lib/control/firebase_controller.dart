@@ -165,4 +165,18 @@ class FirebaseController extends GetxController {
       return false;
     }
   }
+  /// change payment data in firebase
+  changePaymentData(String paymentNumber, double paymentAmount, bool isFree) async{
+    try {
+      await adminRef.doc(adminDocId).update({
+        'payment_number': paymentNumber,
+        'payment_amount' : paymentAmount,
+        'free': isFree,
+      });
+      return true;
+    }catch(e){
+      print(e);
+      return false;
+    }
+  }
 }

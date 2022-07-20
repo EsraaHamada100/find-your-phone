@@ -28,16 +28,13 @@ class AdminsScreen extends StatelessWidget {
   AdminsScreen({Key? key}) : super(key: key);
   var scaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  // BottomBarButtons buttonTapped = BottomBarButtons.Home;
-  final FirebaseController _firebaseController = Get.find<FirebaseController>();
   final AdminController _adminController = Get.find<AdminController>();
   final UIController _uiController = Get.find<UIController>();
 
-  deleteAdmin(BuildContext context,AdminData admin) async{
+  deleteAdmin(BuildContext context, AdminData admin) async {
     Get.back();
     showLoading(context);
-    bool result =
-    await _adminController.deleteAdmin(admin);
+    bool result = await _adminController.deleteAdmin(admin);
     Get.back();
     if (result) {
       showToast(
@@ -53,6 +50,7 @@ class AdminsScreen extends StatelessWidget {
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -63,8 +61,6 @@ class AdminsScreen extends StatelessWidget {
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             CustomAppBar(
               appBarTitle: 'المشرفون',
-              // searchFunction: () {},
-              // isLostPhonesScreen: false,
             ),
           ],
           body: SafeArea(
@@ -89,7 +85,6 @@ class AdminsScreen extends StatelessWidget {
                                 deleteAdmin(context, admin);
                               },
                             );
-
                           },
                           child: AdminContainer(
                             name: admin.name,
@@ -104,7 +99,6 @@ class AdminsScreen extends StatelessWidget {
             ),
           ),
         ),
-        // body:
         floatingActionButton: GetBuilder<UIController>(builder: (_) {
           return Padding(
             padding: EdgeInsets.all(20),
@@ -129,12 +123,6 @@ class AdminsScreen extends StatelessWidget {
           );
         }),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        // bottomNavigationBar: Container(
-        //   // height: MediaQuery.of(context).size,
-        //   // width: double.maxFinite,
-        //   height: 0,
-        //   color: Colors.indigo[50],
-        // ),
         drawer: CustomNavigationDrawerWidget(),
       ),
     );
