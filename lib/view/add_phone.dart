@@ -1,9 +1,7 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:find_your_phone/control/add_phone_controller.dart';
 import 'package:find_your_phone/control/admin_controller.dart';
-import 'package:find_your_phone/control/controller.dart';
 import 'package:find_your_phone/control/sign_controller.dart';
 import 'package:find_your_phone/shared/colors.dart';
 import 'package:find_your_phone/shared/reusable_widgets/components.dart';
@@ -12,9 +10,8 @@ import 'package:find_your_phone/shared/reusable_widgets/add_phone_input_field.da
 import 'package:find_your_phone/shared/reusable_widgets/scrollable_transparent_app_var.dart';
 import 'package:find_your_phone/view/lost_phones_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 
 class AddPhone extends StatelessWidget {
   AddPhone({
@@ -210,6 +207,12 @@ class AddPhone extends StatelessWidget {
                               },
                               title: " الرقم التسلسلي " " IMEI1 : ",
                               hint: "اكتب الرقم التسلسلى لهاتفك",
+                              inputFormatters: [
+                                // // only accept letters from a to z and numbers
+                                FilteringTextInputFormatter.allow(
+                                  RegExp("[0-9a-zA-Z]"),
+                                ),
+                              ],
                             ),
                             AddPhoneInputField(
                               onSaved: (val) {
@@ -227,12 +230,20 @@ class AddPhone extends StatelessWidget {
                               },
                               title: " الرقم التسلسلي " " IMEI2 : ",
                               hint: " اكتب الرقم التسلسلى الثانى لهاتفك إن وجد",
+                              inputFormatters: [
+                                // // only accept letters from a to z and numbers
+                                FilteringTextInputFormatter.allow(
+                                  RegExp("[0-9a-zA-Z]"),
+                                ),
+                              ],
                             ),
-                            Divider(),
-                            SizedBox(height: 30),
+                            const Divider(),
+                            const SizedBox(height: 30),
                             Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 10),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 5,
+                                horizontal: 10,
+                              ),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 color: defaultColor,
@@ -263,6 +274,15 @@ class AddPhone extends StatelessWidget {
                               },
                               title: "رقم الهاتف",
                               hint: " اكتب رقم هاتفك للتواصل",
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                // // only accept numbers
+                                FilteringTextInputFormatter.allow(
+                                  RegExp("[0-9]"),
+                                ),
+                                // FilteringTextInputFormatter.allow(
+                                //     RegExp(r'^ ?\d*')),
+                              ],
                             ),
                             AddPhoneInputField(
                               onSaved: (val) {
@@ -285,6 +305,13 @@ class AddPhone extends StatelessWidget {
                               },
                               title: "رقم الواتساب",
                               hint: "اكتب رقم يوجد عليه حساب واتساب",
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(
+                                    "[0-9]",
+                                  ),
+                                ),
+                              ],
                             ),
                             AddPhoneInputField(
                               onSaved: (val) {
@@ -319,8 +346,9 @@ class AddPhone extends StatelessWidget {
                                     customAlertDialog(
                                       context,
                                       title: 'إضافة هاتف',
-                                      content:
-                                          'يجب دفع مبلغ 10 جنيه لإضافة هاتفك,'
+                                      content: 'يجب دفع مبلغ'
+                                          ' ${_adminController.adminDocument!.paymentAmount} '
+                                          'جنيه لإضافة هاتفك,'
                                           ' هل تريد إكمال عملية الإضافة ؟',
                                       confirmFunction: () {
                                         Get.back();
@@ -449,4 +477,5 @@ class AddPhone extends StatelessWidget {
           );
         });
   }
+
 }

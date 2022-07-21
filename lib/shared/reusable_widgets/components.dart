@@ -122,7 +122,7 @@ customNoActionDialog(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset('assets/images/design_of_the_project.png'),
+              Image.asset('assets/images/thanks_image.jpg'),
               Text(
                 title,
                 style: Theme.of(context).textTheme.headline5,

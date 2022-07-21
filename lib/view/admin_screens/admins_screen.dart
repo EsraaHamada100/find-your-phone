@@ -75,7 +75,6 @@ class AdminsScreen extends StatelessWidget {
                     children: [
                       for (AdminData admin in _adminController.admins)
                         GestureDetector(
-                          onTap: () {},
                           onLongPress: () async {
                             customAlertDialog(
                               context,

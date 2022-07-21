@@ -10,7 +10,7 @@ import 'package:find_your_phone/view/phone_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../control/controller.dart';
+import '../control/app_controller.dart';
 import '../model/lost_phone.dart';
 import '../shared/reusable_widgets/app_bar.dart';
 import '../shared/reusable_widgets/navigation_drawer_widget.dart';

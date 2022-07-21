@@ -1,6 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:find_your_phone/control/controller.dart';
+import 'package:find_your_phone/control/app_controller.dart';
 import 'package:find_your_phone/shared/colors.dart';
 import 'package:find_your_phone/shared/enums.dart';
 import 'package:find_your_phone/shared/reusable_widgets/app_bar.dart';
@@ -139,7 +139,7 @@ class SettingsScreen extends StatelessWidget {
                             elevation: MaterialStateProperty.all(2),
                           ),
                           onPressed: () {
-                            changePaymentDataBottomSheet(context);
+                            customBottomSheet(context, form(context));
                           },
                           child: Text('تغيير بيانات الدفع'),
                         ),
@@ -155,9 +155,206 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  changePaymentDataBottomSheet(BuildContext context) {
+  // changePaymentDataBottomSheet(BuildContext context) {
+  //   TextEditingController paymentNumberController = TextEditingController();
+  //   TextEditingController paymentAmountController = TextEditingController();
+  //   paymentNumberController.text = adminController.adminDocument != null
+  //       ? adminController.adminDocument!.paymentNumber
+  //       : '';
+  //   paymentAmountController.text = adminController.adminDocument != null
+  //       ? adminController.adminDocument!.paymentAmount.toString()
+  //       : '';
+  //   bool isFree = adminController.isFree;
+  //   return showModalBottomSheet(
+  //     // mainAxisSize: MainAxisSize.min,
+  //     context: context,
+  //     isScrollControlled: true, // only work on showModalBottomSheet function
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.only(
+  //         topLeft: Radius.circular(15),
+  //         topRight: Radius.circular(15),
+  //       ),
+  //     ),
+  //     builder: (_) {
+  //       return Directionality(
+  //         textDirection: TextDirection.rtl,
+  //         child: Padding(
+  //           padding: MediaQuery.of(context).viewInsets,
+  //           child: Container(
+  //             height: MediaQuery.of(context).size.height * 0.5,
+  //             padding: const EdgeInsets.all(20),
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 const Center(
+  //                   child: Text(
+  //                     'بيانات الدفع',
+  //                     style: TextStyle(
+  //                       fontSize: 18,
+  //                       fontWeight: FontWeight.w600,
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 const SizedBox(height: 20),
+  //                 Form(
+  //                   key: formKey,
+  //                   child: Column(
+  //                     children: [
+  //                       CustomSignInputField(
+  //                         controller: paymentNumberController,
+  //                         // onSaved: (val) {
+  //                         //   if (val != null && val.trim() != '') {
+  //                         //     // paymentNumber = val.trim();
+  //                         //   }
+  //                         // },
+  //                         validator: (val) {
+  //                           if (val == null || val.trim() == '') {
+  //                             return 'أكتب رقم هاتف صحيح';
+  //                           }
+  //                           if (val.trim().length != 10 &&
+  //                               val.trim().length != 11) {
+  //                             return 'رقم هاتف غير صالح';
+  //                           }
+  //                           return null;
+  //                         },
+  //                         hint: " اكتب الرقم الذى سيرسل إليه المبلغ",
+  //                         icon: Icons.phone,
+  //                         keyboardType: TextInputType.number,
+  //                       ),
+  //                       const SizedBox(
+  //                         height: 20,
+  //                       ),
+  //                       CustomSignInputField(
+  //                         controller: paymentAmountController,
+  //                         // onSaved: (val) {
+  //                         //   if (val != null && val.trim() != '') {
+  //                         //     // paymentNumber = val.trim();
+  //                         //   }
+  //                         // },
+  //                         validator: (val) {
+  //                           if (val == null || val.trim() == '') {
+  //                             return 'أكتب مبلغ صحيح';
+  //                           }
+  //                           if (val.trim().length > 5) {
+  //                             return 'مبلغ غير صحيح';
+  //                           }
+  //                           return null;
+  //                         },
+  //                         hint: " اكتب المبلغ",
+  //                         icon: Icons.monetization_on_rounded,
+  //                         keyboardType: TextInputType.number,
+  //                       ),
+  //                       const SizedBox(
+  //                         height: 20,
+  //                       ),
+  //                       Padding(
+  //                         padding: EdgeInsets.symmetric(horizontal: 10),
+  //                         child: Row(
+  //                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                           children: [
+  //                             Text(
+  //                               'مجانًا',
+  //                               style: TextStyle(
+  //                                 fontSize: 20,
+  //                                 fontWeight: FontWeight.w600,
+  //                                 color: buttonColor,
+  //                               ),
+  //                             ),
+  //                             GetBuilder<AdminController>(builder: (context) {
+  //                               return Switch(
+  //                                 activeColor: defaultColor,
+  //                                 value: adminController.isFree,
+  //                                 onChanged: (_) {
+  //                                   adminController.changeIsFree();
+  //                                 },
+  //                               );
+  //                             }),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                       const SizedBox(height: 20),
+  //                       Row(
+  //                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                         children: [
+  //                           Expanded(
+  //                             child: OutlinedButton(
+  //                               style: ButtonStyle(
+  //                                 backgroundColor:
+  //                                     MaterialStateProperty.all(buttonColor),
+  //                                 foregroundColor:
+  //                                     MaterialStateProperty.all(Colors.white),
+  //                               ),
+  //                               onPressed: () async {
+  //                                 Get.back();
+  //                                 showLoading(context);
+  //                                 var formData = formKey.currentState;
+  //                                 if (formData!.validate()) {
+  //                                   formKey.currentState!.save();
+  //                                   bool result =
+  //                                       await adminController.changePaymentData(
+  //                                     paymentNumber:
+  //                                         paymentNumberController.text,
+  //                                     paymentAmount: double.parse(
+  //                                       paymentAmountController.text,
+  //                                     ),
+  //                                   );
+  //                                   if (result) {
+  //                                     Get.back();
+  //                                     showToast(
+  //                                       context,
+  //                                       'تم تغيير بيانات الدفع بنجاح',
+  //                                       ToastStates.success,
+  //                                     );
+  //                                   } else {
+  //                                     Get.back();
+  //                                     showToast(
+  //                                       context,
+  //                                       'حدث خطأ أثناء حفظ البيانات يرجى'
+  //                                       ' المحاوله لاحقًا',
+  //                                       ToastStates.error,
+  //                                     );
+  //                                   }
+  //                                 }
+  //                               },
+  //                               child: const Text('تم'),
+  //                             ),
+  //                           ),
+  //                           const SizedBox(
+  //                             width: 20,
+  //                           ),
+  //                           Expanded(
+  //                             child: OutlinedButton(
+  //                               style: ButtonStyle(
+  //                                 foregroundColor:
+  //                                     MaterialStateProperty.all(defaultColor),
+  //                               ),
+  //                               onPressed: () {
+  //                                 if (isFree != adminController.isFree) {
+  //                                   adminController.changeIsFree();
+  //                                 }
+  //                                 Get.back();
+  //                               },
+  //                               child: const Text('إلغاء'),
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+  /// change payment data form
+  Widget form(BuildContext context){
     TextEditingController paymentNumberController = TextEditingController();
     TextEditingController paymentAmountController = TextEditingController();
+    AdminController adminController = Get.find<AdminController>();
     paymentNumberController.text = adminController.adminDocument != null
         ? adminController.adminDocument!.paymentNumber
         : '';
@@ -165,189 +362,168 @@ class SettingsScreen extends StatelessWidget {
         ? adminController.adminDocument!.paymentAmount.toString()
         : '';
     bool isFree = adminController.isFree;
-    return showModalBottomSheet(
-      // mainAxisSize: MainAxisSize.min,
-      context: context,
-      isScrollControlled: true, // only work on showModalBottomSheet function
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(15),
-          topRight: Radius.circular(15),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Center(
+          child: Text(
+            'بيانات الدفع',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
-      ),
-      builder: (_) {
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: Padding(
-            padding: MediaQuery.of(context).viewInsets,
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.5,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Center(
-                    child: Text(
-                      'بيانات الدفع',
+        const SizedBox(height: 20),
+        Form(
+          key: formKey,
+          child: Column(
+            children: [
+              CustomSignInputField(
+                controller: paymentNumberController,
+                // onSaved: (val) {
+                //   if (val != null && val.trim() != '') {
+                //     // paymentNumber = val.trim();
+                //   }
+                // },
+                validator: (val) {
+                  if (val == null || val.trim() == '') {
+                    return 'أكتب رقم هاتف صحيح';
+                  }
+                  if (val.trim().length != 10 &&
+                      val.trim().length != 11) {
+                    return 'رقم هاتف غير صالح';
+                  }
+                  return null;
+                },
+                hint: " اكتب الرقم الذى سيرسل إليه المبلغ",
+                icon: Icons.phone,
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              CustomSignInputField(
+                controller: paymentAmountController,
+                // onSaved: (val) {
+                //   if (val != null && val.trim() != '') {
+                //     // paymentNumber = val.trim();
+                //   }
+                // },
+                validator: (val) {
+                  if (val == null || val.trim() == '') {
+                    return 'أكتب مبلغ صحيح';
+                  }
+                  if (val.trim().length > 5) {
+                    return 'مبلغ غير صحيح';
+                  }
+                  return null;
+                },
+                hint: " اكتب المبلغ",
+                icon: Icons.monetization_on_rounded,
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'مجانًا',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.w600,
+                        color: buttonColor,
                       ),
                     ),
+                    GetBuilder<AdminController>(builder: (context) {
+                      return Switch(
+                        activeColor: defaultColor,
+                        value: adminController.isFree,
+                        onChanged: (_) {
+                          adminController.changeIsFree();
+                        },
+                      );
+                    }),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                        MaterialStateProperty.all(buttonColor),
+                        foregroundColor:
+                        MaterialStateProperty.all(Colors.white),
+                      ),
+                      onPressed: () async {
+
+                        var formData = formKey.currentState;
+                        if (formData!.validate()) {
+                          formKey.currentState!.save();
+                          Get.back();
+                          showLoading(context);
+                          bool result =
+                          await adminController.changePaymentData(
+                            paymentNumber:
+                            paymentNumberController.text,
+                            paymentAmount: double.parse(
+                              paymentAmountController.text,
+                            ),
+                          );
+                          if (result) {
+                            Get.back();
+                            showToast(
+                              context,
+                              'تم تغيير بيانات الدفع بنجاح',
+                              ToastStates.success,
+                            );
+                          } else {
+                            Get.back();
+                            showToast(
+                              context,
+                              'حدث خطأ أثناء حفظ البيانات يرجى'
+                                  ' المحاوله لاحقًا',
+                              ToastStates.error,
+                            );
+                          }
+                        }
+                      },
+                      child: const Text('تم'),
+                    ),
                   ),
-                  const SizedBox(height: 20),
-                  Form(
-                    key: formKey,
-                    child: Column(
-                      children: [
-                        CustomSignInputField(
-                          controller: paymentNumberController,
-                          // onSaved: (val) {
-                          //   if (val != null && val.trim() != '') {
-                          //     // paymentNumber = val.trim();
-                          //   }
-                          // },
-                          validator: (val) {
-                            if (val == null || val.trim() == '') {
-                              return 'أكتب رقم هاتف صحيح';
-                            }
-                            if (val.trim().length != 10 &&
-                                val.trim().length != 11) {
-                              return 'رقم هاتف غير صالح';
-                            }
-                            return null;
-                          },
-                          hint: " اكتب الرقم الذى سيرسل إليه المبلغ",
-                          icon: Icons.phone,
-                          keyboardType: TextInputType.number,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        CustomSignInputField(
-                          controller: paymentAmountController,
-                          // onSaved: (val) {
-                          //   if (val != null && val.trim() != '') {
-                          //     // paymentNumber = val.trim();
-                          //   }
-                          // },
-                          validator: (val) {
-                            if (val == null || val.trim() == '') {
-                              return 'أكتب مبلغ صحيح';
-                            }
-                            if (val.trim().length > 5) {
-                              return 'مبلغ غير صحيح';
-                            }
-                            return null;
-                          },
-                          hint: " اكتب المبلغ",
-                          icon: Icons.monetization_on_rounded,
-                          keyboardType: TextInputType.number,
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'مجانًا',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                  color: buttonColor,
-                                ),
-                              ),
-                              GetBuilder<AdminController>(builder: (context) {
-                                return Switch(
-                                  activeColor: defaultColor,
-                                  value: adminController.isFree,
-                                  onChanged: (_) {
-                                    adminController.changeIsFree();
-                                  },
-                                );
-                              }),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              child: OutlinedButton(
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all(buttonColor),
-                                  foregroundColor:
-                                      MaterialStateProperty.all(Colors.white),
-                                ),
-                                onPressed: () async {
-                                  Get.back();
-                                  showLoading(context);
-                                  var formData = formKey.currentState;
-                                  if (formData!.validate()) {
-                                    formKey.currentState!.save();
-                                    bool result =
-                                        await adminController.changePaymentData(
-                                      paymentNumber:
-                                          paymentNumberController.text,
-                                      paymentAmount: double.parse(
-                                        paymentAmountController.text,
-                                      ),
-                                    );
-                                    if (result) {
-                                      Get.back();
-                                      showToast(
-                                        context,
-                                        'تم تغيير بيانات الدفع بنجاح',
-                                        ToastStates.success,
-                                      );
-                                    } else {
-                                      Get.back();
-                                      showToast(
-                                        context,
-                                        'حدث خطأ أثناء حفظ البيانات يرجى'
-                                        ' المحاوله لاحقًا',
-                                        ToastStates.error,
-                                      );
-                                    }
-                                  }
-                                },
-                                child: const Text('تم'),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            Expanded(
-                              child: OutlinedButton(
-                                style: ButtonStyle(
-                                  foregroundColor:
-                                      MaterialStateProperty.all(defaultColor),
-                                ),
-                                onPressed: () {
-                                  if (isFree != adminController.isFree) {
-                                    adminController.changeIsFree();
-                                  }
-                                  Get.back();
-                                },
-                                child: const Text('إلغاء'),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: OutlinedButton(
+                      style: ButtonStyle(
+                        foregroundColor:
+                        MaterialStateProperty.all(defaultColor),
+                      ),
+                      onPressed: () {
+                        if (isFree != adminController.isFree) {
+                          adminController.changeIsFree();
+                        }
+                        Get.back();
+                      },
+                      child: const Text('إلغاء'),
                     ),
                   ),
                 ],
               ),
-            ),
+            ],
           ),
-        );
-      },
+        ),
+      ],
     );
   }
 }
+

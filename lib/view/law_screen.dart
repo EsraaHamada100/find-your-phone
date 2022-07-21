@@ -1,4 +1,4 @@
-import 'package:find_your_phone/control/controller.dart';
+import 'package:find_your_phone/control/app_controller.dart';
 import 'package:find_your_phone/shared/colors.dart';
 import 'package:find_your_phone/shared/enums.dart';
 import 'package:find_your_phone/shared/reusable_widgets/navigation_drawer_widget.dart';

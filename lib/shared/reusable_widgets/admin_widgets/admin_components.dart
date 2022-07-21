@@ -113,6 +113,40 @@ addAdminBottomSheet(
     elevation: 15.0,
   );
 }
+customBottomSheet(BuildContext context, Widget form) {
+
+  return showModalBottomSheet(
+    // mainAxisSize: MainAxisSize.min,
+    context: context,
+    isScrollControlled: true, // only work on showModalBottomSheet function
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(15),
+        topRight: Radius.circular(15),
+      ),
+    ),
+    builder: (_) {
+      // I used wrap here to make the bottom sheet as height as
+      // it's content
+      return Wrap(
+        children: [
+          Directionality(
+            textDirection: TextDirection.rtl,
+            child: Padding(
+              padding: MediaQuery.of(context).viewInsets,
+              child: Container(
+                // height: MediaQuery.of(context).size.height * 0.56,
+                padding: const EdgeInsets.all(20),
+                child: form,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
 // changePaymentDataBottomSheet(BuildContext context, formKey) {
 //   final AdminController adminController = Get.find<AdminController>();

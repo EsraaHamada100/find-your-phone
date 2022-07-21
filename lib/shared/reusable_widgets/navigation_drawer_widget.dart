@@ -7,11 +7,11 @@ import 'package:find_your_phone/view/how_to_use_our_app_scree.dart';
 import 'package:find_your_phone/view/profile.dart';
 import 'package:find_your_phone/view/support_us_screen.dart';
 import 'package:find_your_phone/view/admin_screens/verify_phones_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../control/controller.dart';
+import '../../control/app_controller.dart';
+import '../../view/contact_us_screen.dart';
 import '../../view/found_phones_screen.dart';
 import '../../view/law_screen.dart';
 import '../../view/lost_phones_screen.dart';
@@ -28,8 +28,7 @@ class CustomNavigationDrawerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // String? userName = '';
-    final String name =
-        _signController.userData.displayName ?? 'مستخدم';
+    final String name = _signController.userData.displayName ?? 'مستخدم';
 
     final String email = (_signController.userData.email != null &&
             _signController.userData.email != "")
@@ -99,28 +98,34 @@ class CustomNavigationDrawerWidget extends StatelessWidget {
                   buildMenuItem(context,
                       text: 'قبول الدفع',
                       icon: Icons.balance_outlined, onClicked: () {
-                        _appController.changeDrawerIndex(2);
-                        Get.to(() => VerifyPhonesScreen());
-                      }, index: 2),
-                  const SizedBox(height: 16,),
-                  buildMenuItem(context, text: 'المشرفون', icon: Icons.admin_panel_settings, onClicked: (){
-                    _appController.changeDrawerIndex(8);
-                    Get.off(()=>AdminsScreen());
+                    _appController.changeDrawerIndex(2);
+                    Get.to(() => VerifyPhonesScreen());
+                  }, index: 2),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  buildMenuItem(context,
+                      text: 'المشرفون',
+                      icon: Icons.admin_panel_settings, onClicked: () {
+                    _appController.changeDrawerIndex(2);
+                    Get.off(() => AdminsScreen());
                     // Get.offAll(()=>Admin);
-
-                  }, index: 8),
-
+                  }, index: 2),
                 ],
               ),
             const SizedBox(
               height: 16,
             ),
-            buildMenuItem(context,
-                text: 'إجراءات قانونية',
-                icon: Icons.balance_outlined, onClicked: () {
-              // _appController.changeDrawerIndex(2);
-              Get.to(() => LawScreen());
-            }, index: 3),
+            buildMenuItem(
+              context,
+              text: 'إجراءات قانونية',
+              icon: Icons.balance_outlined,
+              onClicked: () {
+                // _appController.changeDrawerIndex(3);
+                Get.to(() => LawScreen());
+              },
+              index: 3,
+            ),
             SizedBox(
               height: 16,
             ),
@@ -129,10 +134,10 @@ class CustomNavigationDrawerWidget extends StatelessWidget {
               text: 'إعدادات',
               icon: Icons.settings,
               onClicked: () {
-                _appController.changeDrawerIndex(3);
+                _appController.changeDrawerIndex(4);
                 Get.off(() => SettingsScreen());
               },
-              index: 3,
+              index: 4,
             ),
             SizedBox(
               height: 16,
@@ -146,7 +151,7 @@ class CustomNavigationDrawerWidget extends StatelessWidget {
                 // _appController.changeDrawerIndex(4);
                 Get.to(() => HowToUseOurAppScreen());
               },
-              index: 4,
+              index: 5,
             ),
             SizedBox(
               height: 16,
@@ -159,7 +164,20 @@ class CustomNavigationDrawerWidget extends StatelessWidget {
                 // _appController.changeDrawerIndex(5);
                 Get.to(() => SupportUsScreen());
               },
-              index: 5,
+              index: 6,
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            buildMenuItem(
+              context,
+              text: 'تواصل معنا',
+              icon: Icons.monetization_on_rounded,
+              onClicked: () {
+                // _appController.changeDrawerIndex(5);
+                Get.to(() => ContactUsScreen());
+              },
+              index: 7,
             ),
           ],
         ),

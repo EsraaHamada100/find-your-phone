@@ -1,18 +1,46 @@
+// ignore_for_file: use_build_context_synchronously
 
-import 'package:find_your_phone/control/controller.dart';
+import 'package:find_your_phone/control/admin_controller.dart';
+import 'package:find_your_phone/control/app_controller.dart';
+import 'package:find_your_phone/model/admin_data.dart';
 import 'package:find_your_phone/shared/colors.dart';
+import 'package:find_your_phone/shared/reusable_widgets/admin_widgets/admin_components.dart';
 
 import 'package:find_your_phone/shared/reusable_widgets/scrollable_transparent_app_var.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../enums.dart';
+import 'components.dart';
+import 'custom_sign_input_field.dart';
 
 class ArticlesScreen extends StatelessWidget {
   ArticlesScreen({Key? key, required this.screen}) : super(key: key);
 
   final AppController _controller = Get.find<AppController>();
+  final AdminController _adminController = Get.find<AdminController>();
   final Screens screen;
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  deleteArticle(BuildContext context, int index) async {
+    Get.back();
+    showLoading(context);
+    bool result = await _adminController.deleteLegalActionArticle(index);
+    Get.back();
+    if (result) {
+      showToast(
+        context,
+        'تم الحذف بنجاح',
+        ToastStates.success,
+      );
+    } else {
+      showToast(
+        context,
+        'حدث خطأ أثناء الحذف برجاء المحاوله لاحقًا',
+        ToastStates.error,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -21,31 +49,51 @@ class ArticlesScreen extends StatelessWidget {
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             CustomScrollableTransparentAppBar(
-              appBarTitle: screen == Screens.lawScreen ?'إجراءات قانونيه': 'كيفية استخدام التطبيق',
+              appBarTitle: screen == Screens.lawScreen
+                  ? 'إجراءات قانونيه'
+                  : 'كيفية استخدام التطبيق',
               // foregroundColor: Colors.white,
             ),
           ],
           body: SafeArea(
             child: Padding(
               padding: EdgeInsets.all(20),
-              child: ListView.separated(
+              child: Obx(
+                () => ListView.separated(
                   physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (_, index) => buildArticle(
                     index: index,
                     context: context,
                   ),
                   separatorBuilder: (_, index) => Divider(),
-                  itemCount: 3),
+                  itemCount: _adminController.legalActions.length,
+                ),
+              ),
             ),
           ),
         ),
+
+        floatingActionButton:
+            (screen == Screens.lawScreen && _adminController.isAdmin)
+                ? Padding(
+                    padding: EdgeInsets.all(20),
+                    child: FloatingActionButton(
+                      elevation: 5,
+                      child: Icon(Icons.add),
+                      onPressed: () {
+                        customBottomSheet(context, form(context));
+                      },
+                    ),
+                  )
+                : Container(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         // drawer: CustomNavigationDrawerWidget(),
       ),
     );
   }
 
   Widget buildArticle({required int index, required BuildContext context}) {
-    return GetBuilder<AppController>(builder: (_) {
+    return GetBuilder<AdminController>(builder: (_) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -55,10 +103,22 @@ class ArticlesScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               color: secondaryColor,
             ),
-            child: InkWell(
+            child: GestureDetector(
               onTap: () {
-                _controller.changeVisiblity(index);
-                print(_controller.articlesList[index]['isVisible']);
+                _adminController.changeVisibility(index);
+                // print(_controller.articlesList[index]['isVisible']);
+              },
+              onLongPress: () async {
+                if (screen == Screens.lawScreen) {
+                  customAlertDialog(
+                    context,
+                    title: 'حذف المقالة',
+                    content: 'هل أنت متأكد من أنك تريد حذف المقالة ؟',
+                    confirmFunction: () {
+                      deleteArticle(context, index);
+                    },
+                  );
+                }
               },
               child: Container(
                 padding: EdgeInsets.all(15),
@@ -70,10 +130,10 @@ class ArticlesScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      _controller.articlesList[index]['title'],
+                      _adminController.legalActions[index].title,
                       style: Theme.of(context).textTheme.headline6,
                     ),
-                    Icon(_controller.articlesList[index]['isVisible']
+                    Icon(_adminController.legalActions[index].isVisible
                         ? Icons.keyboard_arrow_down_outlined
                         : Icons.keyboard_arrow_left_outlined),
                   ],
@@ -82,7 +142,7 @@ class ArticlesScreen extends StatelessWidget {
             ),
           ),
           Visibility(
-            visible: _controller.articlesList[index]['isVisible'],
+            visible: _adminController.legalActions[index].isVisible,
             replacement: const SizedBox.shrink(),
             child: Container(
               padding: EdgeInsets.all(20),
@@ -91,7 +151,7 @@ class ArticlesScreen extends StatelessWidget {
                 color: secondaryColor,
               ),
               child: Text(
-                _controller.articlesList[index]['body'],
+                _adminController.legalActions[index].content,
                 style: Theme.of(context).textTheme.bodyText1,
                 textAlign: TextAlign.justify,
               ),
@@ -100,5 +160,121 @@ class ArticlesScreen extends StatelessWidget {
         ],
       );
     });
+  }
+
+  Widget form(BuildContext context) {
+    late String title, description;
+    AdminController adminController = Get.find<AdminController>();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Center(
+          child: Text(
+            'إضافة مقالة',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        Form(
+          key: formKey,
+          child: Column(
+            children: [
+              CustomSignInputField(
+                onSaved: (val) {
+                  title = val!;
+                },
+                validator: (val) {
+                  if (val == null || val.trim() == '') {
+                    return 'أكتب عنوانًا';
+                  }
+                  if (val.trim().length < 4) {
+                    return 'عنوان غير صالح';
+                  }
+                  return null;
+                },
+                hint: " اكتب عنوان المقالة",
+                icon: Icons.text_fields,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              CustomSignInputField(
+                onSaved: (value) {
+                  description = value!;
+                },
+                validator: (value) {
+                  if (value == null || value.trim() == '') {
+                    return 'أكتب  المقالة';
+                  }
+                  if (value.trim().length < 10) {
+                    return 'المقالة صغيره جدًا';
+                  }
+                  return null;
+                },
+                icon: null,
+                hint: 'قم بكتابة التفاصيل هنا',
+                keyboardType: TextInputType.multiline,
+                minLines: 8,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(buttonColor),
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.white),
+                      ),
+                      onPressed: () async {
+                        var formData = formKey.currentState;
+                        if (formData!.validate()) {
+                          formKey.currentState!.save();
+                          Get.back();
+                          showLoading(context);
+                          bool result = await _adminController.addLegalActionArticle(
+                              title: title, content: description);
+                          Get.back();
+                          if(result){
+                            showToast(context, 'تمت إضافة المقالة بنجاح', ToastStates.success);
+                          }else {
+                            showToast(context, 'لم نستطع إضافة المقالة يرجى المحاولة لاحقًا', ToastStates.error);
+                          }
+
+                        }
+                      },
+                      child: const Text('تم'),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: OutlinedButton(
+                      style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all(defaultColor),
+                      ),
+                      onPressed: () {
+                        Get.back();
+                      },
+                      child: const Text('إلغاء'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }

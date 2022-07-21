@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 
@@ -13,6 +14,7 @@ class AddPhoneInputField extends StatelessWidget {
     this.controller,
     this.arabicText = false,
     this.keyboardType,
+    this.inputFormatters,
   }) : super(key: key);
   final String title;
   final String hint;
@@ -21,6 +23,7 @@ class AddPhoneInputField extends StatelessWidget {
   final String? Function(String?)? validator;
   final bool arabicText;
   final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -55,6 +58,7 @@ class AddPhoneInputField extends StatelessWidget {
                     controller: controller,
                     autofocus: false,
                     keyboardType: keyboardType,
+                    inputFormatters: inputFormatters,
                     cursorColor:
                         Get.isDarkMode ? Colors.grey[100] : Colors.grey[600],
                     // readOnly: widget != null ? true : false,

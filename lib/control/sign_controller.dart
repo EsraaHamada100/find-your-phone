@@ -69,23 +69,28 @@ class SignController extends GetxController {
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
-        final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+        final userCredential =
+            await FirebaseAuth.instance.signInWithCredential(credential);
 
         _userData = userCredential.user;
         _userId = userCredential.user!.uid;
+        /// get the data from firebase
+        if (_firebaseController.phonesDocuments.isEmpty) {
+          _firebaseController.getPhonesDocuments();
+          await _adminController.getAdminDocument();
+          /// check if the user is admin or not
+          debugPrint(
+              'is admin in google login screen : ${_adminController.isAdmin}');
+        }
         _adminController.checkAdmin(_userId);
-
+        debugPrint('is admin = ${_adminController.isAdmin}');
         Get.offAll(() => LostPhonesScreen());
       }
     } catch (e) {
       print(e);
     }
 
-      if (_firebaseController.phonesDocuments.isEmpty) {
-        // _firebaseController.getLostPhonesDocuments();
-        // _firebaseController.getFoundPhonesDocuments();
-        _firebaseController.getPhonesDocuments();
-      }
+
   }
 
   // Sign out with google
@@ -200,6 +205,7 @@ class SignController extends GetxController {
           // _firebaseController.getLostPhonesDocuments();
           // _firebaseController.getFoundPhonesDocuments();
           _firebaseController.getPhonesDocuments();
+          _adminController.getAdminDocument();
         }
         _adminController.checkAdmin(_userId);
         Get.offAll(() => LostPhonesScreen());
@@ -296,6 +302,7 @@ class SignController extends GetxController {
             });
       }
     }
+    return null;
     // return null;
   }
 

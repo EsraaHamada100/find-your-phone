@@ -1,30 +1,20 @@
 
 import 'package:email_validator/email_validator.dart';
+import 'package:find_your_phone/control/app_controller.dart';
 import 'package:find_your_phone/control/sign_controller.dart';
 import 'package:find_your_phone/shared/colors.dart';
 import 'package:find_your_phone/shared/reusable_widgets/custom_sign_input_field.dart';
 import 'package:find_your_phone/view/forget_password.dart';
-import 'package:find_your_phone/view/lost_phones_screen.dart';
 import 'package:find_your_phone/view/sign_up.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-
-import '../shared/reusable_widgets/components.dart';
-
-// class SignInScreen extends StatefulWidget {
-//   const SignInScreen({Key? key}) : super(key: key);
-//
-//   @override
-//   State<SignInScreen> createState() => _SignInScreenState();
-// }
 
 class SignInScreen extends StatelessWidget {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   String? userName, email, password;
-  SignController _signController = Get.find<SignController>();
+  final SignController _signController = Get.find<SignController>();
+  final AppController _appController = Get.find<AppController>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   signIn(context) async {
@@ -32,80 +22,12 @@ class SignInScreen extends StatelessWidget {
     if (formData!.validate()) {
       // in order to store the data in variables
       formData.save();
+      _appController.changeDrawerIndex(0);
       await _signController.signInWithEmailAndPassword(
         context,
         email: email!,
         password: password!,
       );
-      // try {
-      //   showLoading(context);
-      //   final credential =
-      //       await FirebaseAuth.instance.signInWithEmailAndPassword(
-      //     email: email!,
-      //     password: password!,
-      //   );
-      //   print('user name');
-      //   print(credential.user!.displayName);
-      //   return credential;
-      // } on FirebaseAuthException catch (e) {
-      //   if (e.code == 'user-not-found') {
-      //     Navigator.of(context).pop();
-      //     print('No user found for that email.');
-      //     showDialog(
-      //         context: context,
-      //         builder: (context) {
-      //           return AlertDialog(
-      //             shape: RoundedRectangleBorder(
-      //               borderRadius: BorderRadius.circular(20),
-      //             ),
-      //             content: const Text('No user found for that email'),
-      //           );
-      //         });
-      //   } else if (e.code == 'wrong-password') {
-      //     Navigator.of(context).pop();
-      //     print('Wrong password provided for that user.');
-      //     showDialog(
-      //         context: context,
-      //         builder: (context) {
-      //           return AlertDialog(
-      //             shape: RoundedRectangleBorder(
-      //               borderRadius: BorderRadius.circular(20),
-      //             ),
-      //             title: Icon(Icons.warning_amber_rounded),
-      //             content: const Text('Wrong password provided for that user.'),
-      //           );
-      //         });
-      //   }
-      // }
-      //   try {
-      //     final credential =
-      //         await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      //       email: email!,
-      //       password: password!,
-      //     );
-      //     return credential;
-      //   } on FirebaseAuthException catch (e) {
-      //     if (e.code == 'weak-password') {
-      //       print('The password provided is too weak.');
-      //     } else if (e.code == 'email-already-in-use') {
-      //       showDialog(
-      //         context: context,
-      //         builder: (context) {
-      //           return AlertDialog(
-      //               shape: RoundedRectangleBorder(
-      //                 borderRadius: BorderRadius.circular(20),
-      //               ),
-      //               title: Icon(Icons.warning_amber_rounded),
-      //               content: const Text('This email is already registered'),);
-      //         }
-      //       );
-      //     }
-      //   } catch (e) {
-      //     print(e);
-      //   }
-      // } else {
-      //   print('Not Valid');
-      // }
     }
   }
 
@@ -153,40 +75,6 @@ class SignInScreen extends StatelessWidget {
                           hint: 'البريد الإلكترونى',
                         ),
                         const SizedBox(height: 20),
-                        // password
-                        // GetBuilder<SignController>(builder: (_) {
-                        //   return TextFormField(
-                        //     onSaved: (val) {
-                        //       password = val;
-                        //     },
-                        //     validator: (val) {
-                        //       if (val == null) {
-                        //         return "اكتب كلمة مرور";
-                        //       }
-                        //       if (val.length > 100) {
-                        //         return "اكتب كلمة مرور اقصر. نهتم بالأمان ولكن ليس لهذه الدرجه :)";
-                        //       }
-                        //       if (val.length < 6) {
-                        //         return "كلمة المرور يجب أن تكون أكثر من 6 أحرف";
-                        //       }
-                        //       return null;
-                        //     },
-                        //     decoration: InputDecoration(
-                        //       prefixIcon: Icon(Icons.password),
-                        //       suffixIcon: IconButton(
-                        //           onPressed: ()=>_signController.changeVisibility(),
-                        //           icon: Icon(_signController.isVisible
-                        //               ? Icons.visibility_off_outlined
-                        //               : Icons.visibility_outlined))
-                        //       ,
-                        //       hintText: 'كلمة المرور',
-                        //       border: const OutlineInputBorder(
-                        //         borderSide: BorderSide(width: 1),
-                        //       ),
-                        //     ),
-                        //     obscureText: (!_signController.isVisible) ? true : false,
-                        //   );
-                        // }),
                         CustomSignInputField(
                           // because I don't want the eye icon to appear
                           controller: _passwordController,
@@ -294,6 +182,7 @@ class SignInScreen extends StatelessWidget {
                   // Sign in with google
                   ElevatedButton.icon(
                       onPressed: () async {
+                        _appController.changeDrawerIndex(0);
                         await _signController.signInWithGoogle();
                       },
                       label: Text(

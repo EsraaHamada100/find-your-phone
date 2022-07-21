@@ -3,7 +3,7 @@ class AdminDocument {
   late String paymentNumber;
   late double paymentAmount;
   List<AdminData> admins = [];
-  List<LegalActionData> legalActions = [];
+  List<ArticleData> legalActions = [];
   AdminDocument.fromJson(Map<String, dynamic> json) {
     isFree = json['free'];
     paymentAmount = json['payment_amount'];
@@ -13,7 +13,7 @@ class AdminDocument {
     });
 
     json['legal_actions_list'].forEach((legalAction) {
-      legalActions.add(LegalActionData.fromJson(legalAction));
+      legalActions.add(ArticleData.fromJson(legalAction));
     });
   }
 }
@@ -37,11 +37,19 @@ class AdminData {
 
 }
 
-class LegalActionData {
+class ArticleData {
   late String title;
   late String content;
-  LegalActionData.fromJson(Map<String, dynamic> json) {
+  late bool isVisible;
+  Map<String, Object> json = <String, Object>{};
+  ArticleData(this.title, this.content, this.isVisible);
+  ArticleData.fromJson(Map<String, dynamic> json) {
     title = json['title'];
     content = json['content'];
+    isVisible = false;
+  }
+  ArticleData.toJson(ArticleData legalActionData){
+    json['title'] = legalActionData.title;
+    json['content'] = legalActionData.content;
   }
 }

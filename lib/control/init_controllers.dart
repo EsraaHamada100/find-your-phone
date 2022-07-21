@@ -1,6 +1,6 @@
 import 'package:find_your_phone/control/add_phone_controller.dart';
 import 'package:find_your_phone/control/admin_controller.dart';
-import 'package:find_your_phone/control/controller.dart';
+import 'package:find_your_phone/control/app_controller.dart';
 import 'package:find_your_phone/control/sign_controller.dart';
 import 'package:find_your_phone/control/ui_controller.dart';
 import 'package:get/get.dart';

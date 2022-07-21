@@ -1,5 +1,6 @@
 import 'package:find_your_phone/control/firebase_controller.dart';
 import 'package:find_your_phone/model/admin_data.dart';
+import 'package:find_your_phone/shared/enums.dart';
 import 'package:get/get.dart';
 
 import '../model/phone_data.dart';
@@ -16,6 +17,7 @@ class AdminController extends GetxController {
   AdminDocument? adminDocument;
   RxList legalActions = [].obs;
   RxList admins = [].obs;
+  final DateTime now = DateTime.now();
 
   /// get the document that has all admin nessecary data including :
   /// payment number , admins list, legal actions list ...etc
@@ -26,7 +28,6 @@ class AdminController extends GetxController {
       print('admin Document is not equal to null');
       legalActions.addAll(adminDocument!.legalActions);
       admins.addAll(adminDocument!.admins);
-
       _isFree = adminDocument!.isFree;
       print('is free value is $_isFree');
       return true;
@@ -41,7 +42,7 @@ class AdminController extends GetxController {
     update();
   }
 
-  /// check if the user is admin or not to see it's privileges
+  /// check if the user is admin or not to see his privileges
   checkAdmin(String id) {
     print('adminsData');
     print(admins);
@@ -50,25 +51,11 @@ class AdminController extends GetxController {
       if (admin.id == id) {
         _isAdmin = true;
 
-        // the data is all in and I will write here a function that
-        // will delete every phone exceeds one year after it's publish
-        final DateTime now = DateTime.now();
         if (now.day == 1) {
-          for (PhonesDocument doc in _firebaseController.phonesDocuments) {
-            // delete empty phone documents
-            if (doc.phonesData.isEmpty) {
-              await _firebaseController.deleteDocument(doc.id);
-              continue;
-            }
-            for (PhoneData phone in doc.phonesData) {
-              List<String> date = phone.addedDate.split('-');
-              int year = int.parse(date[0]);
-              int month = int.parse(date[1]);
-              if (now.year > year && (now.month >= month)) {
-                _firebaseController.deletePhoneFromFirebase(doc.id, phone);
-              }
-            }
-          }
+          deletePhonesAfterOneYear();
+        }
+        if (now.day == 1 || now.day == 8 || now.day == 15 || now.day == 21) {
+          deleteNotVerifiedPhonesAfterOneWeek();
         }
       }
     });
@@ -113,17 +100,96 @@ class AdminController extends GetxController {
   Future<bool> changePaymentData({
     required String paymentNumber,
     required double paymentAmount,
-  }
-  ) async {
+  }) async {
     bool result = await _firebaseController.changePaymentData(
         paymentNumber, paymentAmount, _isFree);
-    if(result && adminDocument != null){
+    if (result && adminDocument != null) {
       adminDocument!.paymentNumber = paymentNumber;
       adminDocument!.isFree = _isFree;
       adminDocument!.paymentAmount = paymentAmount;
       return true;
-    }else {
+    } else {
       return false;
+    }
+  }
+
+// change visibility
+  void changeVisibility(int index) {
+    legalActions[index].isVisible = !legalActions[index].isVisible;
+    update();
+  }
+
+  /// add admin
+  Future<bool> addLegalActionArticle(
+      {required String title, required String content}) async {
+    Map<String, dynamic> newArticle = {
+      'title': title,
+      'content': content,
+    };
+    bool result = await _firebaseController.addLegalActionArticle(newArticle);
+    if (result) {
+      ArticleData article = ArticleData(title, content, false);
+      legalActions.add(article);
+    }
+
+    return result;
+  }
+
+  Future<bool> deleteLegalActionArticle(int index) async {
+    bool result =
+        await _firebaseController.deleteLegalActionArticle(legalActions[index]);
+    if (result) {
+      legalActions.removeAt(index);
+    }
+    return result;
+  }
+
+  deletePhonesAfterOneYear() async {
+    for (PhonesDocument doc in _firebaseController.phonesDocuments) {
+      // delete empty phone documents
+      if (doc.phonesData.isEmpty) {
+        await _firebaseController.deleteDocument(doc.id);
+        continue;
+      }
+      for (PhoneData phone in doc.phonesData) {
+        List<String> date = phone.addedDate.split('-');
+        int year = int.parse(date[0]);
+        int month = int.parse(date[1]);
+        if (now.year > year && (now.month >= month)) {
+          _firebaseController.deletePhoneFromFirebase(doc.id, phone);
+        }
+      }
+    }
+  }
+
+  deleteNotVerifiedPhonesAfterOneWeek() async {
+    List<PhoneData> needRemove = [];
+    int month, day;
+    for (PhoneData phone in _firebaseController.needVerification) {
+      List<String> date = phone.addedDate.split('-');
+      month = int.parse(date[1]);
+      day = int.parse(date[2]);
+      if (day + 7 > 30) {
+        if (now.month > month && now.day >= (day + 7) % 30) {
+          _firebaseController.deletePhoneFromFirebase(
+            _firebaseController.getDocId(phone),
+            phone,
+          );
+          needRemove.add(phone);
+        }
+      } else if (now.day >= day + 7 || now.month > month) {
+        print('we are in delete not verified phones');
+        _firebaseController.deletePhoneFromFirebase(
+          _firebaseController.getDocId(phone),
+       phone,
+        );
+        needRemove.add(phone);
+      }
+    }
+    /// we removed phones from needVerification we do that here
+    /// because we can't remove from the list while iterating it
+    for (PhoneData phone in needRemove) {
+      _firebaseController.needVerification.remove(phone);
     }
   }
 }

@@ -19,7 +19,7 @@ class FirebaseController extends GetxController {
   RxList foundPhones = [].obs;
   RxList needVerification = [].obs;
   String adminDocId = 'X8SwuPWCuaevsHVzH1gC';
-  void getPhonesDocuments() async {
+  getPhonesDocuments() async {
     print('we are reading ');
     await FirebaseFirestore.instance
         .collection('phones')
@@ -50,6 +50,7 @@ class FirebaseController extends GetxController {
         }
         if (doc.phonesData[i].paymentNumber != null) {
           needVerification.add(doc.phonesData[i]);
+          print('we add a phone to it ${needVerification.length}');
         }
       }
       // doc.phonesData.forEach((phone) {
@@ -165,16 +166,45 @@ class FirebaseController extends GetxController {
       return false;
     }
   }
+
   /// change payment data in firebase
-  changePaymentData(String paymentNumber, double paymentAmount, bool isFree) async{
+  changePaymentData(
+      String paymentNumber, double paymentAmount, bool isFree) async {
     try {
       await adminRef.doc(adminDocId).update({
         'payment_number': paymentNumber,
-        'payment_amount' : paymentAmount,
+        'payment_amount': paymentAmount,
         'free': isFree,
       });
       return true;
-    }catch(e){
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  /// add legal action article to firebase
+  Future<bool> addLegalActionArticle(
+      Map<String, dynamic> legalActionArticle) async {
+    try {
+      await adminRef.doc(adminDocId).update({
+        'legal_actions_list': FieldValue.arrayUnion([legalActionArticle])
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// delete legal action article from firebase
+  Future<bool> deleteLegalActionArticle(ArticleData legalActionArticle) async {
+    try {
+      await adminRef.doc(adminDocId).update({
+        'legal_actions_list': FieldValue.arrayRemove(
+            [ArticleData.toJson(legalActionArticle).json])
+      });
+      return true;
+    } catch (e) {
       print(e);
       return false;
     }

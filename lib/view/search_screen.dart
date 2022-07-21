@@ -1,4 +1,4 @@
-import 'package:find_your_phone/control/controller.dart';
+import 'package:find_your_phone/control/app_controller.dart';
 import 'package:find_your_phone/control/firebase_controller.dart';
 import 'package:find_your_phone/model/phone_data.dart';
 import 'package:find_your_phone/shared/colors.dart';
