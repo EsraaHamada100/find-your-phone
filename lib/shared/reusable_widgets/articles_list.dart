@@ -15,11 +15,13 @@ import 'components.dart';
 import 'custom_sign_input_field.dart';
 
 class ArticlesScreen extends StatelessWidget {
-  ArticlesScreen({Key? key, required this.screen}) : super(key: key);
+  ArticlesScreen({Key? key, required this.screen, required this.articlesList})
+      : super(key: key);
 
   final AppController _controller = Get.find<AppController>();
   final AdminController _adminController = Get.find<AdminController>();
   final Screens screen;
+  RxList articlesList;
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   deleteArticle(BuildContext context, int index) async {
@@ -61,16 +63,13 @@ class ArticlesScreen extends StatelessWidget {
               padding: EdgeInsets.all(20),
               child: Obx(
                 () => ListView.separated(
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (_, index) => buildArticle(
-                    index: index,
-                    context: context,
-                  ),
-                  separatorBuilder: (_, index) => Divider(),
-                  itemCount: screen == Screens.lawScreen
-                      ? _adminController.legalActions.length
-                      : _adminController.howToUseOurApp.length,
-                ),
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (_, index) => buildArticle(
+                          index: index,
+                          context: context,
+                        ),
+                    separatorBuilder: (_, index) => Divider(),
+                    itemCount: articlesList.length),
               ),
             ),
           ),
@@ -136,27 +135,19 @@ class ArticlesScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      screen == Screens.lawScreen
-                          ? _adminController.legalActions[index].title
-                          : _adminController.howToUseOurApp[index].title,
+                      articlesList[index].title,
                       style: Theme.of(context).textTheme.headline6,
                     ),
-                    screen == Screens.lawScreen
-                        ? Icon(_adminController.legalActions[index].isVisible
-                            ? Icons.keyboard_arrow_down_outlined
-                            : Icons.keyboard_arrow_left_outlined)
-                        : Icon(_adminController.howToUseOurApp[index].isVisible
-                            ? Icons.keyboard_arrow_down_outlined
-                            : Icons.keyboard_arrow_left_outlined),
+                    Icon(articlesList[index].isVisible
+                        ? Icons.keyboard_arrow_down_outlined
+                        : Icons.keyboard_arrow_left_outlined),
                   ],
                 ),
               ),
             ),
           ),
           Visibility(
-            visible: screen == Screens.lawScreen
-                ? _adminController.legalActions[index].isVisible
-                : _adminController.howToUseOurApp[index].isVisible,
+            visible: articlesList[index].isVisible,
             replacement: const SizedBox.shrink(),
             child: Container(
               padding: EdgeInsets.all(20),
@@ -165,9 +156,7 @@ class ArticlesScreen extends StatelessWidget {
                 color: secondaryColor,
               ),
               child: Text(
-                screen == Screens.lawScreen
-                    ? _adminController.legalActions[index].content
-                    : _adminController.howToUseOurApp[index].content,
+                articlesList[index].content,
                 style: Theme.of(context).textTheme.bodyText1,
                 textAlign: TextAlign.justify,
               ),

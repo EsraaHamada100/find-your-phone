@@ -1,6 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:find_your_phone/control/admin_controller.dart';
-import 'package:find_your_phone/control/ui_controller.dart';
+import 'package:find_your_phone/control/app_controller.dart';
 import 'package:find_your_phone/shared/reusable_widgets/custom_button.dart';
 import 'package:find_your_phone/shared/reusable_widgets/custom_sign_input_field.dart';
 import 'package:find_your_phone/view/admin_screens/admins_screen.dart';
@@ -17,7 +17,8 @@ addAdminBottomSheet(
 ) {
   late String name, email, id;
   final AdminController adminController = Get.find<AdminController>();
-  final UIController uiController = Get.find<UIController>();
+  // final UIController uiController = Get.find<UIController>();
+  final AppController appController = Get.find<AppController>();
   return scaffoldKey.currentState!.showBottomSheet(
     (context) => Container(
       color: Colors.white,
@@ -92,7 +93,7 @@ addAdminBottomSheet(
                     showLoading(context);
                     bool result = await adminController.addAdmin(
                         id: id, name: name, email: email);
-                    uiController.changeAddAdminFloatingButton();
+                    appController.changeAddAdminFloatingButton();
                     if (result) {
                       Get.offAll(() => AdminsScreen());
                       showToast(

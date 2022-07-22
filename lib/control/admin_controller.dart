@@ -40,6 +40,11 @@ class AdminController extends GetxController {
       'يمكنك الذهاب إلى هذه الصفحه إذا رغبت بتقديم اقتراح أو شكوى وسنكون سعيدين جدا بتلقى اقتراحاتكم وشكاويكم والرد عليها فى أقرب وقت',
       false,
     ),
+    ArticleData(
+      'كيفية تسجيل الخروج ',
+      'قم بالضغط على معلومات الحساب الظاهرة في أعلى الشريط الجانبى وسيظهر لك زر يمكنك الضغط عليه لتسجيل الخروج',
+      false,
+    ),
   ].obs;
 
   /// get the document that has all admin nessecary data including :
