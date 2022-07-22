@@ -108,7 +108,7 @@ class PhoneDetailsScreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  phoneImages(phone.imageUrls),
+                  phoneImages(context,phone.imageUrls),
                   const SizedBox(
                     height: 40,
                   ),
@@ -270,7 +270,6 @@ class PhoneDetailsScreen extends StatelessWidget {
                             },
                           );
                         },
-
                         backgroundColor: Colors.green,
                         child: const Icon(
                           Icons.check_outlined,
@@ -284,7 +283,7 @@ class PhoneDetailsScreen extends StatelessWidget {
     );
   }
 
-  CarouselSlider phoneImages(List<String> phoneImages) {
+  CarouselSlider phoneImages(BuildContext context, List<String> phoneImages) {
     return CarouselSlider(
       items: phoneImages.isNotEmpty
           ? phoneImages
@@ -293,8 +292,8 @@ class PhoneDetailsScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(5),
                   child: Image(
                     image: NetworkImage(image.toString()),
-                    width: double.maxFinite,
-                    fit: BoxFit.cover,
+                    // width: double.maxFinite,
+                    fit: BoxFit.contain,
                   ),
                 ),
               )
@@ -310,7 +309,7 @@ class PhoneDetailsScreen extends StatelessWidget {
               ),
             ],
       options: CarouselOptions(
-        height: 270,
+        height: MediaQuery.of(context).size.height * 0.5,
         enableInfiniteScroll: false,
         // that will make the image take all the slider width
         // if this is 0.8 or something else some other photos

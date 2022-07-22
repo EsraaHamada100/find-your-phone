@@ -307,9 +307,7 @@ class AddPhone extends StatelessWidget {
                               hint: "اكتب رقم يوجد عليه حساب واتساب",
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
-                                  RegExp(
-                                    "[0-9]",
-                                  ),
+                                  RegExp(r'^\+?\d*'),
                                 ),
                               ],
                             ),
@@ -477,5 +475,4 @@ class AddPhone extends StatelessWidget {
           );
         });
   }
-
 }

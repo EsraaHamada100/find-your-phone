@@ -112,6 +112,18 @@ class AdminController extends GetxController {
       return false;
     }
   }
+  // change the email that you allow user to connect on
+  Future<bool> changeConnectEmail({
+    required String email,
+  }) async {
+    bool result = await _firebaseController.changeConnectEmail(email);
+    if (result && adminDocument != null) {
+      adminDocument!.connectEmail = email;
+      return true;
+    } else {
+      return false;
+    }
+  }
 
 // change visibility
   void changeVisibility(int index) {
@@ -181,11 +193,12 @@ class AdminController extends GetxController {
         print('we are in delete not verified phones');
         _firebaseController.deletePhoneFromFirebase(
           _firebaseController.getDocId(phone),
-       phone,
+          phone,
         );
         needRemove.add(phone);
       }
     }
+
     /// we removed phones from needVerification we do that here
     /// because we can't remove from the list while iterating it
     for (PhoneData phone in needRemove) {

@@ -30,7 +30,8 @@ class AddPhoneController extends GetxController {
 
   /// pick and change phone images
   void pickPhoneImages() async {
-    final List<XFile>? selectedImages = await _picker.pickMultiImage();
+    final List<XFile>? selectedImages =
+        await _picker.pickMultiImage(imageQuality: 85);
     if (selectedImages!.isNotEmpty) {
       clearPhoneImages();
       print("The length of list is" + '${_imagesFileList.length}');
@@ -107,11 +108,11 @@ class AddPhoneController extends GetxController {
     newPhone.addIf(
         facebookAccount != null, 'facebook_account', facebookAccount);
     newPhone.addIf(imageUrls.isNotEmpty, 'image_urls', imageUrls);
-    newPhone.addIf(paymentNumber != null , 'payment_number', paymentNumber );
+    newPhone.addIf(paymentNumber != null, 'payment_number', paymentNumber);
     _addPhoneToFirebase(newPhone, isLostPhone);
     // to update the list every time a new verified phone added
     // making it seems like real time database
-    if(paymentNumber == null){
+    if (paymentNumber == null) {
       PhoneData phoneData = PhoneData(
         phoneType: phoneType,
         phoneDescription: phoneDescription,
@@ -136,7 +137,7 @@ class AddPhoneController extends GetxController {
         _firebaseController.foundPhones.refresh();
         Get.offAll(() => FoundPhonesScreen());
       }
-    }else {
+    } else {
       // the phone is not verified
       Get.back();
     }
@@ -146,7 +147,6 @@ class AddPhoneController extends GetxController {
   }
 
   _addPhoneToFirebase(Map<String, dynamic> newPhone, bool isLostPhone) async {
-
     PhonesDocument lastDoc =
         _firebaseController.phonesDocuments[0] as PhonesDocument;
     int listLength = lastDoc.phonesData.length;

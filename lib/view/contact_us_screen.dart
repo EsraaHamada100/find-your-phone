@@ -8,6 +8,7 @@ import 'package:find_your_phone/shared/reusable_widgets/scrollable_transparent_a
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../shared/reusable_widgets/components.dart';
 import 'lost_phones_screen.dart';
@@ -49,7 +50,7 @@ class ContactUsScreen extends StatelessWidget {
                   //   title: '',
                   //   hint: 'ضع المبلغ الذى تريد التبرع به بالجنيه المصرى',
                   // ),
-                  SizedBox(
+                  const SizedBox(
                     height: 40,
                   ),
                   Container(
@@ -57,7 +58,15 @@ class ContactUsScreen extends StatelessWidget {
                     height: 60,
                     child: CustomButton(
                       text: 'البريد الإلكترونى للتواصل',
-                      onPressed: () {
+                      onPressed: () async {
+                        String url =
+                            'mailto:to'
+                            '${_adminController.adminDocument!.connectEmail}';
+                        try {
+                          await launchUrl(Uri.parse(url));
+                        } catch (e) {
+                          print(e);
+                        }
                       },
                     ),
                   ),
@@ -78,5 +87,4 @@ class ContactUsScreen extends StatelessWidget {
     // color: Colors.red,
     // semanticsLabel: 'A red up arrow'
   );
-
 }

@@ -209,4 +209,19 @@ class FirebaseController extends GetxController {
       return false;
     }
   }
+
+  /// change payment data in firebase
+  Future<bool> changeConnectEmail(
+      String email) async {
+    try {
+      await adminRef.doc(adminDocId).update({
+        'connect_email': email,
+
+      });
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
 }
