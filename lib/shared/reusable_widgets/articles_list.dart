@@ -20,6 +20,7 @@ class ArticlesScreen extends StatelessWidget {
   final AppController _controller = Get.find<AppController>();
   final AdminController _adminController = Get.find<AdminController>();
   final Screens screen;
+
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   deleteArticle(BuildContext context, int index) async {
     Get.back();
@@ -66,7 +67,9 @@ class ArticlesScreen extends StatelessWidget {
                     context: context,
                   ),
                   separatorBuilder: (_, index) => Divider(),
-                  itemCount: _adminController.legalActions.length,
+                  itemCount: screen == Screens.lawScreen
+                      ? _adminController.legalActions.length
+                      : _adminController.howToUseOurApp.length,
                 ),
               ),
             ),
@@ -105,7 +108,10 @@ class ArticlesScreen extends StatelessWidget {
             ),
             child: GestureDetector(
               onTap: () {
-                _adminController.changeVisibility(index);
+                screen == Screens.lawScreen
+                    ? _adminController.changeLegalActionArticleVisibility(index)
+                    : _adminController
+                        .changeHowToUseOurAppArticleVisibility(index);
                 // print(_controller.articlesList[index]['isVisible']);
               },
               onLongPress: () async {
@@ -130,19 +136,27 @@ class ArticlesScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      _adminController.legalActions[index].title,
+                      screen == Screens.lawScreen
+                          ? _adminController.legalActions[index].title
+                          : _adminController.howToUseOurApp[index].title,
                       style: Theme.of(context).textTheme.headline6,
                     ),
-                    Icon(_adminController.legalActions[index].isVisible
-                        ? Icons.keyboard_arrow_down_outlined
-                        : Icons.keyboard_arrow_left_outlined),
+                    screen == Screens.lawScreen
+                        ? Icon(_adminController.legalActions[index].isVisible
+                            ? Icons.keyboard_arrow_down_outlined
+                            : Icons.keyboard_arrow_left_outlined)
+                        : Icon(_adminController.howToUseOurApp[index].isVisible
+                            ? Icons.keyboard_arrow_down_outlined
+                            : Icons.keyboard_arrow_left_outlined),
                   ],
                 ),
               ),
             ),
           ),
           Visibility(
-            visible: _adminController.legalActions[index].isVisible,
+            visible: screen == Screens.lawScreen
+                ? _adminController.legalActions[index].isVisible
+                : _adminController.howToUseOurApp[index].isVisible,
             replacement: const SizedBox.shrink(),
             child: Container(
               padding: EdgeInsets.all(20),
@@ -151,7 +165,9 @@ class ArticlesScreen extends StatelessWidget {
                 color: secondaryColor,
               ),
               child: Text(
-                _adminController.legalActions[index].content,
+                screen == Screens.lawScreen
+                    ? _adminController.legalActions[index].content
+                    : _adminController.howToUseOurApp[index].content,
                 style: Theme.of(context).textTheme.bodyText1,
                 textAlign: TextAlign.justify,
               ),
@@ -240,15 +256,19 @@ class ArticlesScreen extends StatelessWidget {
                           formKey.currentState!.save();
                           Get.back();
                           showLoading(context);
-                          bool result = await _adminController.addLegalActionArticle(
-                              title: title, content: description);
+                          bool result =
+                              await _adminController.addLegalActionArticle(
+                                  title: title, content: description);
                           Get.back();
-                          if(result){
-                            showToast(context, 'تمت إضافة المقالة بنجاح', ToastStates.success);
-                          }else {
-                            showToast(context, 'لم نستطع إضافة المقالة يرجى المحاولة لاحقًا', ToastStates.error);
+                          if (result) {
+                            showToast(context, 'تمت إضافة المقالة بنجاح',
+                                ToastStates.success);
+                          } else {
+                            showToast(
+                                context,
+                                'لم نستطع إضافة المقالة يرجى المحاولة لاحقًا',
+                                ToastStates.error);
                           }
-
                         }
                       },
                       child: const Text('تم'),
