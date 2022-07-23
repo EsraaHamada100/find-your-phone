@@ -19,7 +19,7 @@ class ForgetPasswordScreen extends StatelessWidget {
   forgotPassword(BuildContext context) async {
     var formData = formKey.currentState;
     if (formData!.validate()) {
-      formData!.save();
+      formData.save();
       await _signController.forgotPassword(
         context,
         userEmail: email,

@@ -1,33 +1,20 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:find_your_phone/control/admin_controller.dart';
-import 'package:find_your_phone/shared/cache/cache_helper.dart';
-import 'package:find_your_phone/shared/cache/get_storage.dart';
+import 'package:find_your_phone/shared/enums.dart';
 import 'package:find_your_phone/view/signin_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
-// import 'package:get_storage/get_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:image_picker/image_picker.dart';
 
-import '../shared/colors.dart';
-import '../shared/enums.dart';
 import '../shared/reusable_widgets/components.dart';
 import '../view/lost_phones_screen.dart';
 import 'firebase_controller.dart';
 
 class SignController extends GetxController {
-  // BottomBarButtons _tappedButton = BottomBarButtons.Home;
-  // BottomBarButtons get tappedButton => _tappedButton;
   final FirebaseController _firebaseController = Get.find<FirebaseController>();
   final AdminController _adminController = Get.find<AdminController>();
-  // GetStorage box = GetStorage('user');
-  @override
-  onReady() {
-    super.onReady();
-    print("The Sign controller is ready");
-  }
-
   // get user data;
   late var _userData;
   late String _userId;
@@ -39,27 +26,8 @@ class SignController extends GetxController {
   get userData => _userData;
   String get userId => _userId;
   GoogleSignIn googleSignIn = GoogleSignIn();
-  // sign in with google
-  // signInWithGoogle() async {
-  //   try {
-  //     await googleSignIn.signIn().then((value){
-  //       _userData = value;
-  //       _userId = value!.id;
-  //       _adminController.checkAdmin(_userId);
-  //
-  //       Get.offAll(() => LostPhonesScreen());
-  //     });
-  //   } on Exception catch (e) {
-  //     print(e);
-  //   }
 
-  //   if (_firebaseController.phonesDocuments.isEmpty) {
-  //     // _firebaseController.getLostPhonesDocuments();
-  //     // _firebaseController.getFoundPhonesDocuments();
-  //     _firebaseController.getPhonesDocuments();
-  //   }
-  // }
-
+  /// google sign in
   signInWithGoogle() async {
     try {
       final googleUser = await googleSignIn.signIn();
@@ -74,10 +42,12 @@ class SignController extends GetxController {
 
         _userData = userCredential.user;
         _userId = userCredential.user!.uid;
+
         /// get the data from firebase
         if (_firebaseController.phonesDocuments.isEmpty) {
           _firebaseController.getPhonesDocuments();
           await _adminController.getAdminDocument();
+
           /// check if the user is admin or not
           debugPrint(
               'is admin in google login screen : ${_adminController.isAdmin}');
@@ -89,8 +59,6 @@ class SignController extends GetxController {
     } catch (e) {
       print(e);
     }
-
-
   }
 
   // Sign out with google
@@ -100,14 +68,11 @@ class SignController extends GetxController {
         await googleSignIn.signOut();
       }
       await FirebaseAuth.instance.signOut();
-
-      // await MyGetStorage.remove(key: 'user_id');
-      // await MyGetStorage.remove(key: 'user_data');
     });
     _adminController.setIsAdmin(false);
   }
-  // sign up with email and password
 
+  // sign up with email and password
   Future<void> signUpWithEmailAndPassword(
     BuildContext context, {
     required String userName,
@@ -125,8 +90,6 @@ class SignController extends GetxController {
       print('user credential : ');
       print(credential);
       print('user name : ');
-      // print(userName);
-      // await credential!.user!.updateDisplayName(userName);
       User user = FirebaseAuth.instance.currentUser!;
       await user.updateDisplayName(userName);
       await user.sendEmailVerification().then((_) {
@@ -138,7 +101,7 @@ class SignController extends GetxController {
                 actions: [
                   OutlinedButton(
                     onPressed: () => Get.offAll(SignInScreen()),
-                    child: Text('موافق'),
+                    child: const Text('موافق'),
                   ),
                 ],
                 actionsAlignment: MainAxisAlignment.center,
@@ -152,10 +115,6 @@ class SignController extends GetxController {
               );
             });
       });
-      // _userData = credential.user;
-
-      // Get.offAll(()=>LostPhones());
-      // return credential;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
@@ -175,10 +134,8 @@ class SignController extends GetxController {
               );
             });
       }
-      // return null;
     } catch (e) {
       print(e);
-      // return null;
     }
   }
 
@@ -199,11 +156,8 @@ class SignController extends GetxController {
       if (credential.user!.emailVerified) {
         _userData = credential.user;
         _userId = credential.user!.uid;
-        // box.write('user_data',  _userData);
-        // box.write('user_id', _userId);
+
         if (_firebaseController.phonesDocuments.isEmpty) {
-          // _firebaseController.getLostPhonesDocuments();
-          // _firebaseController.getFoundPhonesDocuments();
           _firebaseController.getPhonesDocuments();
           _adminController.getAdminDocument();
         }
@@ -212,98 +166,26 @@ class SignController extends GetxController {
       } else {
         signOut();
         Get.back();
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                actions: [
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: OutlinedButton(
-                                  onPressed: () async {
-                                    await credential.user!
-                                        .sendEmailVerification()
-                                        .then((_) {
-                                      Get.back();
-                                    });
-                                  },
-                                  child: Text(
-                                    ' أرسل إيميل تأكيد اخر',
-                                    style: TextStyle(
-                                        color: buttonColor,
-                                        fontWeight: FontWeight.w400),
-                                  )),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: () => Get.back(),
-                                child: Text(
-                                  'تجاهل',
-                                  style: TextStyle(
-                                    color: buttonColor,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-                actionsAlignment: MainAxisAlignment.spaceAround,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                content: const Text('لم يتم تأكيد هذا الإيميل',
-                    textDirection: TextDirection.rtl,
-                    textAlign: TextAlign.center),
-              );
-            });
+        // a dialog that asks a user if he wanted to send a verification
+        // email when his email is not verified
+        sendVerificationEmailDialog(context, () async {
+          await credential.user!.sendEmailVerification().then((_) {
+            Get.back();
+          });
+        });
       }
-      // return credential;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         Navigator.of(context).pop();
         print('No user found for that email.');
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                content: const Text('No user found for that email'),
-              );
-            });
+        showToast(context, 'لم يتم العثور على مستخدم لهذا البريد الإلكتروني', ToastStates.error);
       } else if (e.code == 'wrong-password') {
         Navigator.of(context).pop();
         print('Wrong password provided for that user.');
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                title: Icon(Icons.warning_amber_rounded),
-                content: const Text('Wrong password provided for that user.'),
-              );
-            });
+        showToast(context, 'كلمة المرور خاطئة', ToastStates.error);
       }
     }
     return null;
-    // return null;
   }
 
   // password visibility
@@ -324,43 +206,29 @@ class SignController extends GetxController {
         email: userEmail,
         password: '1',
       );
-
-      // return credential;
     } on FirebaseAuthException catch (e) {
       print(e.code);
       if (e.code == 'user-not-found') {
         Navigator.of(context).pop();
         print('No user found for that email.');
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                content: const Text('No user found for that email'),
-              );
-            });
-      } else {
+        customNoActionAlertDialog(
+          context: context,
+          content: 'لم يتم العثور على مستخدم لهذا البريد الإلكتروني',
+        );
+      } else if (e.code == 'wrong-password') {
+        print(e.code);
         Navigator.of(context).pop();
         print('Wrong password provided for that user.');
         await auth.sendPasswordResetEmail(email: userEmail).then((value) {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  // contentTextStyle: TextStyle(),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  // title: Icon(Icons.warning_amber_rounded),
-                  content: const Text(
-                    'لقد قمنا بإرسال ايميل لك . اضغط عليه لتغيير كلمة المرور',
-                    textDirection: TextDirection.rtl,
-                  ),
-                );
-              });
+          customNoActionAlertDialog(
+            context: context,
+            content: 'لقد قمنا بإرسال ايميل لك . اضغط عليه لتغيير كلمة المرور',
+          );
         });
+      } else {
+        Navigator.of(context).pop();
+        customNoActionAlertDialog(
+            context: context, content: defaultErrorMessage);
       }
     }
   }

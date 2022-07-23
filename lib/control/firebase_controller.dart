@@ -59,7 +59,35 @@ class FirebaseController extends GetxController {
       print('end phone found document data');
     });
   }
+  // adding a phone to firebase
+  addPhoneToFirebase(Map<String, dynamic> newPhone, bool isLostPhone) async {
+    PhonesDocument lastDoc =
+    phonesDocuments[0] as PhonesDocument;
+    int listLength = lastDoc.phonesData.length;
 
+    print(listLength);
+    if (listLength < 2000) {
+      await phonesRef.doc(lastDoc.id).update({
+        'phones_list': FieldValue.arrayUnion([newPhone])
+      });
+    } else {
+      await phonesRef.add({
+        'time': lastDoc.time + 1,
+        'phones_list': FieldValue.arrayUnion([newPhone])
+      });
+
+      var lastDocRef =
+      await phonesRef.orderBy('time', descending: true).limit(1).get();
+      lastDocRef.docs.forEach((doc) {
+        String id = doc.id;
+        int time = doc['time'];
+        PhoneData phoneData = PhoneData.fromJson(doc['phones_list'][0]);
+        PhonesDocument phonesDocument =
+        PhonesDocument(id: id, time: time, phonesData: [phoneData]);
+        phonesDocuments.insert(0, phonesDocument);
+      });
+    }
+  }
   Future<AdminDocument?> getAdminDocument() async {
     try {
       AdminDocument? adminDocument;

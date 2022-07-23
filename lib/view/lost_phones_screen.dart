@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../control/firebase_controller.dart';
-import '../model/lost_phone.dart';
 import '../model/phone_data.dart';
 import '../shared/reusable_widgets/app_bar.dart';
 import '../shared/reusable_widgets/navigation_drawer_widget.dart';

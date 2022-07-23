@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:find_your_phone/control/firebase_controller.dart';
 import 'package:find_your_phone/control/sign_controller.dart';
 import 'package:find_your_phone/view/lost_phones_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,14 +14,10 @@ import '../view/found_phones_screen.dart';
 
 class AddPhoneController extends GetxController {
   /*---- -upload images when adding a new lost phone ----*/
-  final _currentUser = FirebaseAuth.instance.currentUser;
+  // ignore: prefer_final_fields
   RxList<XFile> _imagesFileList = <XFile>[].obs;
   List<XFile> get imagesFileList => _imagesFileList;
   final ImagePicker _picker = ImagePicker();
-  // final CollectionReference lostPhonesRef =
-  //     FirebaseFirestore.instance.collection('lost phones');
-  // final CollectionReference foundPhoneRef =
-  //     FirebaseFirestore.instance.collection('found phones');
   final CollectionReference phonesRef =
       FirebaseFirestore.instance.collection('phones');
   final _userController = Get.find<SignController>();
@@ -40,7 +35,6 @@ class AddPhoneController extends GetxController {
       }
     }
     print(_imagesFileList.length);
-    // update();
   }
 
   /// clear phone images
@@ -109,7 +103,7 @@ class AddPhoneController extends GetxController {
         facebookAccount != null, 'facebook_account', facebookAccount);
     newPhone.addIf(imageUrls.isNotEmpty, 'image_urls', imageUrls);
     newPhone.addIf(paymentNumber != null, 'payment_number', paymentNumber);
-    _addPhoneToFirebase(newPhone, isLostPhone);
+    _firebaseController.addPhoneToFirebase(newPhone, isLostPhone);
     // to update the list every time a new verified phone added
     // making it seems like real time database
     if (paymentNumber == null) {
@@ -146,32 +140,5 @@ class AddPhoneController extends GetxController {
     clearPhoneImages();
   }
 
-  _addPhoneToFirebase(Map<String, dynamic> newPhone, bool isLostPhone) async {
-    PhonesDocument lastDoc =
-        _firebaseController.phonesDocuments[0] as PhonesDocument;
-    int listLength = lastDoc.phonesData.length;
 
-    print(listLength);
-    if (listLength < 2000) {
-      await phonesRef.doc(lastDoc.id).update({
-        'phones_list': FieldValue.arrayUnion([newPhone])
-      });
-    } else {
-      await phonesRef.add({
-        'time': lastDoc.time + 1,
-        'phones_list': FieldValue.arrayUnion([newPhone])
-      });
-
-      var lastDocRef =
-          await phonesRef.orderBy('time', descending: true).limit(1).get();
-      lastDocRef.docs.forEach((doc) {
-        String id = doc.id;
-        int time = doc['time'];
-        PhoneData phoneData = PhoneData.fromJson(doc['phones_list'][0]);
-        PhonesDocument phonesDocument =
-            PhonesDocument(id: id, time: time, phonesData: [phoneData]);
-        _firebaseController.phonesDocuments.insert(0, phonesDocument);
-      });
-    }
-  }
 }

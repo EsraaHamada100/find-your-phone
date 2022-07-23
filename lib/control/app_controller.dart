@@ -3,10 +3,6 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 class AppController extends GetxController {
-  @override
-  onReady() {
-    super.onReady();
-  }
 
   int _drawerIndex = 0;
   int get drawerIndex => _drawerIndex;

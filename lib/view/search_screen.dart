@@ -2,19 +2,13 @@ import 'package:find_your_phone/control/app_controller.dart';
 import 'package:find_your_phone/control/firebase_controller.dart';
 import 'package:find_your_phone/model/phone_data.dart';
 import 'package:find_your_phone/shared/colors.dart';
-import 'package:find_your_phone/shared/reusable_widgets/components.dart';
-import 'package:find_your_phone/shared/enums.dart';
 import 'package:find_your_phone/shared/reusable_widgets/custom_sign_input_field.dart';
-import 'package:find_your_phone/shared/reusable_widgets/navigation_drawer_widget.dart';
-import 'package:find_your_phone/view/lost_phones_screen.dart';
 import 'package:find_your_phone/view/phone_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../model/lost_phone.dart';
 import '../shared/reusable_widgets/phone_container.dart';
-import 'law_screen.dart';
-import 'setting_screen.dart';
+
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({required this.isLostPhonesScreen, Key? key})
