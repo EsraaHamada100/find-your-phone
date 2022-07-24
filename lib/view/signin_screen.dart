@@ -1,8 +1,11 @@
+import 'dart:io';
 
 import 'package:email_validator/email_validator.dart';
 import 'package:find_your_phone/control/app_controller.dart';
 import 'package:find_your_phone/control/sign_controller.dart';
 import 'package:find_your_phone/shared/colors.dart';
+import 'package:find_your_phone/shared/enums.dart';
+import 'package:find_your_phone/shared/reusable_widgets/components.dart';
 import 'package:find_your_phone/shared/reusable_widgets/custom_sign_input_field.dart';
 import 'package:find_your_phone/view/forget_password.dart';
 import 'package:find_your_phone/view/sign_up.dart';
@@ -20,6 +23,10 @@ class SignInScreen extends StatelessWidget {
   signIn(context) async {
     var formData = formKey.currentState;
     if (formData!.validate()) {
+      bool result = await _appController.checkInternetConnection(context);
+      if (!result) {
+        return;
+      }
       // in order to store the data in variables
       formData.save();
       _appController.changeDrawerIndex(0);
@@ -58,7 +65,7 @@ class SignInScreen extends StatelessWidget {
                         ),
                         // email
                         CustomSignInputField(
-                          isPassword:false,
+                          isPassword: false,
                           onSaved: (val) {
                             email = val;
                           },
@@ -66,7 +73,7 @@ class SignInScreen extends StatelessWidget {
                             if (val == null) {
                               return "اكتب بريدك الإلكترونى";
                             }
-                            if(!EmailValidator.validate(val)){
+                            if (!EmailValidator.validate(val)) {
                               return "اكتب بريد الكترونى صالح";
                             }
                             return null;
@@ -78,7 +85,7 @@ class SignInScreen extends StatelessWidget {
                         CustomSignInputField(
                           // because I don't want the eye icon to appear
                           controller: _passwordController,
-                          isPassword:true,
+                          isPassword: true,
                           // obscureText: true,
                           onSaved: (val) {
                             password = val;
@@ -120,7 +127,6 @@ class SignInScreen extends StatelessWidget {
                           onPressed: () async {
                             await signIn(context);
                           },
-                          child: Text('تسجيل الدخول'),
                           style: ButtonStyle(
                             fixedSize: MaterialStateProperty.all(
                               Size(150, 50),
@@ -128,11 +134,11 @@ class SignInScreen extends StatelessWidget {
                             backgroundColor:
                                 MaterialStateProperty.all(buttonColor),
                           ),
+                          child: const Text('تسجيل الدخول'),
                         ),
                         SizedBox(
                           height: 20,
                         ),
-
                       ],
                     ),
                   ),
@@ -182,6 +188,11 @@ class SignInScreen extends StatelessWidget {
                   // Sign in with google
                   ElevatedButton.icon(
                       onPressed: () async {
+                        bool result = await _appController
+                            .checkInternetConnection(context);
+                        if (!result) {
+                          return;
+                        }
                         _appController.changeDrawerIndex(0);
                         await _signController.signInWithGoogle();
                       },
@@ -195,9 +206,10 @@ class SignInScreen extends StatelessWidget {
                         width: 30,
                       ),
                       style: ButtonStyle(
-                        minimumSize:
-                            MaterialStateProperty.all(Size(double.maxFinite, 55)),
-                        backgroundColor: MaterialStateProperty.all(Colors.white),
+                        minimumSize: MaterialStateProperty.all(
+                            Size(double.maxFinite, 55)),
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.white),
                         shape: MaterialStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:find_your_phone/control/add_phone_controller.dart';
 import 'package:find_your_phone/control/admin_controller.dart';
 import 'package:find_your_phone/control/app_controller.dart';
@@ -5,6 +7,8 @@ import 'package:find_your_phone/control/firebase_controller.dart';
 import 'package:find_your_phone/control/sign_controller.dart';
 import 'package:find_your_phone/shared/cache/cache_helper.dart';
 import 'package:find_your_phone/shared/colors.dart';
+import 'package:find_your_phone/shared/reusable_widgets/components.dart';
+import 'package:find_your_phone/view/No_internet_screen.dart';
 import 'package:find_your_phone/view/lost_phones_screen.dart';
 import 'package:find_your_phone/view/signin_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,8 +18,10 @@ import 'package:flutter/material.dart';
 import 'package:find_your_phone/control/init_controllers.dart' as controllers;
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 bool isLogin = false;
+bool isOnline = true;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await controllers.init();
@@ -32,10 +38,14 @@ Future<void> main() async {
 
     /// set user data to access it through the app
     signController.setUserData(user, user.uid);
-
+    try {
+      await InternetAddress.lookup('example.com');
+    } on SocketException catch (_) {
+      isOnline = false;
+    }
     if (firebaseController.phonesDocuments.isEmpty) {
       print('we are in reading data from firebase');
-      await firebaseController.getPhonesDocuments();
+      bool result = await firebaseController.getPhonesDocuments();
       bool done = await adminController.getAdminDocument();
       print('done $done');
       if (done) {
@@ -52,7 +62,7 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   MyApp({super.key});
   // This widget is the root of your application.
-  AppController _controller = Get.find<AppController>();
+  final AppController _appController = Get.find<AppController>();
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AppController>(
@@ -128,9 +138,12 @@ class MyApp extends StatelessWidget {
                 ),
                 brightness: Brightness.dark,
               ),
-              themeMode: _controller.isDark ? ThemeMode.dark : ThemeMode.light,
+              themeMode:
+                  _appController.isDark ? ThemeMode.dark : ThemeMode.light,
               // Color(0xff063970)
-              home: isLogin ? LostPhonesScreen() : SignInScreen(),
+              home: isLogin
+                  ? (isOnline ? LostPhonesScreen() :  NoInternetScreen())
+                  : SignInScreen(),
             );
           });
         });

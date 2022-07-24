@@ -44,6 +44,7 @@ dependencies:
   carousel_slider: ^4.1.1
   url_launcher: ^6.1.4
   intl: ^0.17.0
+  sentry_flutter: ^6.2.2
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
@@ -84,6 +85,8 @@ flutter:
     - assets/images/user_logo.png
     - assets/images/thanks_image.jpg
     - assets/images/contact_us_image.svg
+    - assets/images/no-internet-connection.svg
+    - assets/images/no_internet_page_image.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

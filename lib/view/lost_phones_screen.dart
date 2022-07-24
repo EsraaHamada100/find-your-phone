@@ -47,6 +47,7 @@ class LostPhonesScreen extends StatelessWidget {
                               ),
                             ),
                             child: PhoneContainer(
+                              phone: phone,
                               phoneType: phone.phoneType,
                               image: phone.imageUrls.isNotEmpty
                                   ? phone.imageUrls[0]

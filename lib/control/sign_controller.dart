@@ -45,8 +45,9 @@ class SignController extends GetxController {
 
         /// get the data from firebase
         if (_firebaseController.phonesDocuments.isEmpty) {
-          _firebaseController.getPhonesDocuments();
-          await _adminController.getAdminDocument();
+
+         await _firebaseController.getPhonesDocuments();
+         await _adminController.getAdminDocument();
 
           /// check if the user is admin or not
           debugPrint(
@@ -82,7 +83,6 @@ class SignController extends GetxController {
     UserCredential? credential;
     final FirebaseAuth _auth = FirebaseAuth.instance;
     try {
-      showLoading(context);
       credential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
@@ -146,7 +146,6 @@ class SignController extends GetxController {
     required String password,
   }) async {
     try {
-      showLoading(context);
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -198,7 +197,6 @@ class SignController extends GetxController {
 
   // forgot password
   forgotPassword(BuildContext context, {required userEmail}) async {
-    showLoading(context);
     UserCredential? credential;
     final FirebaseAuth auth = FirebaseAuth.instance;
     try {

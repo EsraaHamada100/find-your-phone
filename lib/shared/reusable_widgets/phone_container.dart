@@ -1,14 +1,41 @@
+import 'package:find_your_phone/control/app_controller.dart';
+import 'package:find_your_phone/control/firebase_controller.dart';
+import 'package:find_your_phone/model/phone_data.dart';
+import 'package:find_your_phone/shared/reusable_widgets/components.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../view/phone_details_screen.dart';
 
 class PhoneContainer extends StatelessWidget {
-  PhoneContainer({required this.phoneType,required this.image, required this.IMME1, required this.IMME2,Key? key}) : super(key: key);
+  PhoneContainer(
+      {required this.phoneType,
+      required this.image,
+      required this.IMME1,
+      required this.IMME2,
+      required this.phone,
+      Key? key})
+      : super(key: key);
   String? image;
   String phoneType;
   String IMME1;
   String? IMME2;
+  PhoneData phone;
+  final FirebaseController _firebaseController = Get.find<FirebaseController>();
+  final AppController _appController = Get.find<AppController>();
   @override
   Widget build(BuildContext context) {
-    return   Container(
+    return GestureDetector(
+      onTap: () {
+
+        Get.to(
+          () => PhoneDetailsScreen(
+            phone: phone,
+            docId: _firebaseController.getDocId(phone),
+          ),
+        );
+      },
+      child: Container(
         margin: EdgeInsets.only(bottom: 15),
         padding: EdgeInsets.all(10),
         width: double.maxFinite,
@@ -28,19 +55,23 @@ class PhoneContainer extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: MediaQuery.of(context).size.width*0.2,
+              width: MediaQuery.of(context).size.width * 0.2,
               height: 100,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(5),
                 child: image == null
                     ? Image.asset(
-                  'assets/images/no_phone.jpg',
-                  fit: BoxFit.cover,
-                )
+                        'assets/images/no_phone.jpg',
+                        fit: BoxFit.cover,
+                      )
                     : Image.network(
-                  image!,
-                  fit: BoxFit.cover,
-                ),
+                        image!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (BuildContext context, Object exception,
+                            StackTrace? stackTrace) {
+                          return noInternetImage();
+                        },
+                      ),
               ),
             ),
             SizedBox(
@@ -56,9 +87,9 @@ class PhoneContainer extends StatelessWidget {
                       child: Text(
                         phoneType,
                         style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                          color: Colors.black87,
-                          fontWeight: FontWeight.bold,
-                        ),
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold,
+                            ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -76,9 +107,7 @@ class PhoneContainer extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        IMME2 != null
-                            ? 'IMME2 : $IMME2'
-                            : '',
+                        IMME2 != null ? 'IMME2 : $IMME2' : '',
                         style: Theme.of(context).textTheme.bodyText2!.copyWith(
                             color: Colors.black54,
                             fontWeight: FontWeight.w500,
@@ -93,7 +122,7 @@ class PhoneContainer extends StatelessWidget {
             ),
           ],
         ),
-      );
-    }
+      ),
+    );
   }
-
+}

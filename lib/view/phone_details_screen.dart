@@ -108,7 +108,7 @@ class PhoneDetailsScreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  phoneImages(context,phone.imageUrls),
+                  // phoneImages(context,phone.imageUrls),
                   const SizedBox(
                     height: 40,
                   ),
@@ -290,8 +290,12 @@ class PhoneDetailsScreen extends StatelessWidget {
               .map(
                 (image) => ClipRRect(
                   borderRadius: BorderRadius.circular(5),
-                  child: Image(
+                  child: FadeInImage(
                     image: NetworkImage(image.toString()),
+                    placeholder: AssetImage("assets/images/no_phone.jpg"),
+                    imageErrorBuilder: (context, error, stackTrace) {
+                      return noInternetImage();
+                    },
                     // width: double.maxFinite,
                     fit: BoxFit.contain,
                   ),

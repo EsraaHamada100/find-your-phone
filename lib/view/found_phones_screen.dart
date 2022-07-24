@@ -49,6 +49,7 @@ class FoundPhonesScreen extends StatelessWidget {
                                     docId: _firebaseController.getDocId(phone),
                                   )),
                               child: PhoneContainer(
+                                phone: phone,
                                 phoneType: phone.phoneType,
                                 image: phone.imageUrls.isNotEmpty
                                     ? phone.imageUrls[0]

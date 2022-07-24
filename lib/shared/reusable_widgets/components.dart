@@ -312,3 +312,11 @@ sendVerificationEmailDialog(BuildContext context, void Function()? onPressed){
         );
       });
 }
+
+SvgPicture noInternetImage(){
+  return SvgPicture.asset(
+    'assets/images/no-internet-connection.svg',
+    // color: Colors.red,
+    // semanticsLabel: 'A red up arrow'
+  );
+}

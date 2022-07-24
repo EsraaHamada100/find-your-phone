@@ -1,4 +1,5 @@
 import 'package:email_validator/email_validator.dart';
+import 'package:find_your_phone/control/app_controller.dart';
 import 'package:find_your_phone/control/sign_controller.dart';
 import 'package:find_your_phone/shared/colors.dart';
 import 'package:find_your_phone/shared/reusable_widgets/custom_sign_input_field.dart';
@@ -16,9 +17,14 @@ class ForgetPasswordScreen extends StatelessWidget {
   String? email;
   // final TextEditingController _emailController = TextEditingController();
   final SignController _signController = Get.find<SignController>();
-  forgotPassword(BuildContext context) async {
+  final AppController _appController = Get.find<AppController>();
+ forgotPassword(BuildContext context) async {
     var formData = formKey.currentState;
     if (formData!.validate()) {
+      bool result = await _appController.checkInternetConnection(context);
+      if(!result){
+        return;
+      }
       formData.save();
       await _signController.forgotPassword(
         context,

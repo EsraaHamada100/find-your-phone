@@ -150,6 +150,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             ),
                           ),
                           child: PhoneContainer(
+                            phone: result,
                             phoneType: result.phoneType,
                             image: result.imageUrls.isNotEmpty
                                 ? result.imageUrls[0]

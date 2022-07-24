@@ -1,15 +1,18 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:io';
+
 import 'package:email_validator/email_validator.dart';
+import 'package:find_your_phone/control/app_controller.dart';
 import 'package:find_your_phone/control/sign_controller.dart';
 import 'package:find_your_phone/shared/colors.dart';
 import 'package:find_your_phone/shared/reusable_widgets/custom_sign_input_field.dart';
-import 'package:find_your_phone/view/lost_phones_screen.dart';
-import 'package:find_your_phone/view/signin_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
+import '../shared/enums.dart';
 import '../shared/reusable_widgets/components.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -18,134 +21,26 @@ class SignUpScreen extends StatelessWidget {
   // UserCredential? credential;
   final _passwordController = TextEditingController();
   final _signController = Get.find<SignController>();
-
+  final AppController _appController = Get.find<AppController>();
   SignUpScreen({super.key});
-  // signIn(BuildContext context) async {
-  //   var formData = formKey.currentState;
-  //   if (formData!.validate()) {
-  //     // in order to store the data in variables
-  //     formData.save();
-  //     try {
-  //       showLoading(context);
-  //       final credential =
-  //           await FirebaseAuth.instance.signInWithEmailAndPassword(
-  //         email: email!,
-  //         password: password!,
-  //       );
-  //       return credential;
-  //     } on FirebaseAuthException catch (e) {
-  //       if (e.code == 'user-not-found') {
-  //         Navigator.of(context).pop();
-  //         print('No user found for that email.');
-  //         showDialog(
-  //             context: context,
-  //             builder: (context) {
-  //               return AlertDialog(
-  //                 shape: RoundedRectangleBorder(
-  //                   borderRadius: BorderRadius.circular(20),
-  //                 ),
-  //                 title: Icon(Icons.warning_amber_rounded),
-  //                 content: const Text('No user found for that email'),
-  //               );
-  //             });
-  //       } else if (e.code == 'wrong-password') {
-  //         Navigator.of(context).pop();
-  //         print('Wrong password provided for that user.');
-  //         showDialog(
-  //             context: context,
-  //             builder: (context) {
-  //               return AlertDialog(
-  //                 shape: RoundedRectangleBorder(
-  //                   borderRadius: BorderRadius.circular(20),
-  //                 ),
-  //                 title: Icon(Icons.warning_amber_rounded),
-  //                 content: const Text('Wrong password provided for that user.'),
-  //               );
-  //             });
-  //       }
-  //     }
-  //     //   try {
-  //     //     final credential =
-  //     //         await FirebaseAuth.instance.createUserWithEmailAndPassword(
-  //     //       email: email!,
-  //     //       password: password!,
-  //     //     );
-  //     //     return credential;
-  //     //   } on FirebaseAuthException catch (e) {
-  //     //     if (e.code == 'weak-password') {
-  //     //       print('The password provided is too weak.');
-  //     //     } else if (e.code == 'email-already-in-use') {
-  //     //       showDialog(
-  //     //         context: context,
-  //     //         builder: (context) {
-  //     //           return AlertDialog(
-  //     //               shape: RoundedRectangleBorder(
-  //     //                 borderRadius: BorderRadius.circular(20),
-  //     //               ),
-  //     //               title: Icon(Icons.warning_amber_rounded),
-  //     //               content: const Text('This email is already registered'),);
-  //     //         }
-  //     //       );
-  //     //     }
-  //     //   } catch (e) {
-  //     //     print(e);
-  //     //   }
-  //     // } else {
-  //     //   print('Not Valid');
-  //     // }
-  //   }
-  // }
 
   signUp(BuildContext context) async {
     var formData = formKey.currentState;
 
     // final FirebaseAuth _auth = FirebaseAuth.instance;
     if (formData!.validate()) {
+      bool result = await _appController.checkInternetConnection(context);
+      if(!result){
+        return;
+      }
       formData.save();
+
       await _signController.signUpWithEmailAndPassword(
         context,
         userName: userName!,
         email: email!,
         password: password!,
       );
-      // try {
-      //   showLoading(context);
-      //   credential = await _auth.createUserWithEmailAndPassword(
-      //     email: email!,
-      //     password: password!,
-      //   );
-      //   print('user credential : ');
-      //   print(credential);
-      //   print('user name : ');
-      //   print(userName);
-      //   // await credential!.user!.updateDisplayName(userName);
-      //   await FirebaseAuth.instance.currentUser!.updateDisplayName(userName);
-      //   _signController.setUserData(credential!.user);
-      //   return credential;
-      // } on FirebaseAuthException catch (e) {
-      //   if (e.code == 'weak-password') {
-      //     print('The password provided is too weak.');
-      //   } else if (e.code == 'email-already-in-use') {
-      //     Navigator.of(context).pop();
-      //     showDialog(
-      //         context: context,
-      //         builder: (context) {
-      //           return AlertDialog(
-      //             shape: RoundedRectangleBorder(
-      //               borderRadius: BorderRadius.circular(20),
-      //             ),
-      //             content: const Text(
-      //               '  هذا البريد الإكترونى موجود . يمكنك تسجيل الدخول مباشرة',
-      //               textDirection: TextDirection.rtl,
-      //             ),
-      //           );
-      //         });
-      //   }
-      //   return null;
-      // } catch (e) {
-      //   print(e);
-      //   return null;
-      // }
     }
   }
 
@@ -172,6 +67,11 @@ class SignUpScreen extends StatelessWidget {
                   ),
                   ElevatedButton.icon(
                       onPressed: () async {
+                        bool result = await _appController
+                            .checkInternetConnection(context);
+                        if (!result) {
+                          return;
+                        }
                         await _signController.signInWithGoogle();
                       },
                       label: Text(
@@ -196,7 +96,7 @@ class SignUpScreen extends StatelessWidget {
                           ),
                         ),
                       )),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
                   Row(
@@ -206,7 +106,7 @@ class SignUpScreen extends StatelessWidget {
                       Expanded(child: Divider()),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 30,
                   ),
                   Form(
@@ -216,7 +116,7 @@ class SignUpScreen extends StatelessWidget {
                       children: [
                         const SizedBox(height: 30),
                         CustomSignInputField(
-                          isPassword: false,
+                            isPassword: false,
                             onSaved: (val) {
                               userName = val;
                             },
@@ -237,7 +137,7 @@ class SignUpScreen extends StatelessWidget {
                         const SizedBox(height: 20),
                         // email
                         CustomSignInputField(
-                          isPassword:false,
+                          isPassword: false,
                           onSaved: (val) {
                             email = val;
                           },
@@ -245,7 +145,7 @@ class SignUpScreen extends StatelessWidget {
                             if (val == null) {
                               return "اكتب بريدك الإلكترونى";
                             }
-                            if(!EmailValidator.validate(val)){
+                            if (!EmailValidator.validate(val)) {
                               return "اكتب بريد الكترونى صالح";
                             }
                             return null;
@@ -256,7 +156,7 @@ class SignUpScreen extends StatelessWidget {
                         SizedBox(height: 20),
                         // password
                         CustomSignInputField(
-                          isPassword:true,
+                          isPassword: true,
                           controller: _passwordController,
                           onSaved: (val) {
                             password = val;
@@ -279,7 +179,7 @@ class SignUpScreen extends StatelessWidget {
                         SizedBox(height: 20),
                         // rewrite password
                         CustomSignInputField(
-                          isPassword:true,
+                          isPassword: true,
                           validator: (val) {
                             if (val == null) {
                               return "يجب تأكيد كلمة المرور";

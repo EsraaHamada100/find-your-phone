@@ -1,6 +1,12 @@
+import 'dart:io';
+
 import 'package:find_your_phone/shared/cache/cache_helper.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+
+import '../shared/enums.dart';
+import '../shared/reusable_widgets/components.dart';
 
 class AppController extends GetxController {
 
@@ -38,5 +44,21 @@ class AppController extends GetxController {
   changeAddAdminFloatingButton(){
     _addAdminFloatingButton = ! _addAdminFloatingButton;
     update();
+  }
+  // to check if the user is connected or not when
+  // perform firebase changing
+  Future<bool> checkInternetConnection(BuildContext context) async {
+    try {
+      await InternetAddress.lookup('example.com');
+    } on SocketException catch (_) {
+      showToast(
+        context,
+        'لا يوجد إتصال بالإنترنت',
+        ToastStates.error,
+      );
+      return false;
+    }
+    showLoading(context);
+    return true;
   }
 }

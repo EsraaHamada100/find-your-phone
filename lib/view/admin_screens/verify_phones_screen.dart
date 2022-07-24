@@ -35,6 +35,7 @@ class VerifyPhonesScreen extends StatelessWidget {
                           needVerification: true,
                         ),),
                         child: PhoneContainer(
+                          phone: phone,
                           phoneType: phone.phoneType,
                           image: phone.imageUrls.isNotEmpty
                               ? phone.imageUrls[0]
