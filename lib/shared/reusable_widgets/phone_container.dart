@@ -27,7 +27,6 @@ class PhoneContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-
         Get.to(
           () => PhoneDetailsScreen(
             phone: phone,

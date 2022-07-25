@@ -31,6 +31,7 @@ Future<void> main() async {
   AdminController adminController = Get.find<AdminController>();
   SignController signController = Get.find<SignController>();
   AppController appController = Get.find<AppController>();
+
   var user = FirebaseAuth.instance.currentUser;
   if (user != null) {
     isLogin = true;

@@ -9,7 +9,13 @@
 .history
 .svn/
 migrate_working_dir/
-
+.flutter-plugins
+.flutter-plugins-dependencies
+.metadata
+analysis_options.yaml
+find_your_phone.iml
+pubspec.lock
+pubspec.yaml
 # IntelliJ related
 *.iml
 *.ipr
