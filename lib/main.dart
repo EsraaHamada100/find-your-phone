@@ -100,7 +100,7 @@ class MyApp extends StatelessWidget {
                 darkTheme: ThemeData(
                   // scaffoldBackgroundColor: Colors.black12,
                   // we make the primary color for the whole application is deepOrange
-                  primarySwatch: Colors.deepOrange,
+                  primarySwatch: Colors.indigo,
                   appBarTheme: const AppBarTheme(
                     // it's responsible for the bar above The AppBar which has battery/wifi/etc
                     systemOverlayStyle: SystemUiOverlayStyle(
@@ -122,7 +122,7 @@ class MyApp extends StatelessWidget {
                   ),
                   textTheme: const TextTheme(
                     bodyText2: TextStyle(
-                      color: Colors.white70,
+                      color: Colors.black,
                     ),
                     bodyText1: TextStyle(
                         fontWeight: FontWeight.w600,
