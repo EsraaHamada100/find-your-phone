@@ -90,7 +90,8 @@ addAdminBottomSheet(
                   var formData = formKey.currentState;
                   if (formData!.validate()) {
                     formKey.currentState!.save();
-                    showLoading(context);
+                    bool isConnected = await appController.checkInternetConnection(context);
+                    if(isConnected){
                     bool result = await adminController.addAdmin(
                         id: id, name: name, email: email);
                     appController.changeAddAdminFloatingButton();
@@ -104,7 +105,7 @@ addAdminBottomSheet(
                           context,
                           'حدث خطأ أثناء الإضافة يرجى المحاولة لاحقًا',
                           ToastStates.error);
-                    }
+                    }}
                   }
                 }),
           ],

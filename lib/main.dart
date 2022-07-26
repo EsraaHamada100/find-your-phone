@@ -7,7 +7,6 @@ import 'package:find_your_phone/control/firebase_controller.dart';
 import 'package:find_your_phone/control/sign_controller.dart';
 import 'package:find_your_phone/shared/cache/cache_helper.dart';
 import 'package:find_your_phone/shared/colors.dart';
-import 'package:find_your_phone/shared/reusable_widgets/components.dart';
 import 'package:find_your_phone/view/No_internet_screen.dart';
 import 'package:find_your_phone/view/lost_phones_screen.dart';
 import 'package:find_your_phone/view/signin_screen.dart';
@@ -31,6 +30,7 @@ Future<void> main() async {
   AdminController adminController = Get.find<AdminController>();
   SignController signController = Get.find<SignController>();
   AppController appController = Get.find<AppController>();
+
   var user = FirebaseAuth.instance.currentUser;
   if (user != null) {
     isLogin = true;

@@ -22,21 +22,24 @@ class AdminsScreen extends StatelessWidget {
 
   deleteAdmin(BuildContext context, AdminData admin) async {
     Get.back();
-    showLoading(context);
-    bool result = await _adminController.deleteAdmin(admin);
-    Get.back();
-    if (result) {
-      showToast(
-        context,
-        'تم الحذف بنجاح',
-        ToastStates.success,
-      );
-    } else {
-      showToast(
-        context,
-        'حدث خطأ أثناء الحذف برجاء المحاوله لاحقًا',
-        ToastStates.error,
-      );
+    bool checkInternetResult =
+        await _appController.checkInternetConnection(context);
+    if (checkInternetResult) {
+      bool result = await _adminController.deleteAdmin(admin);
+      Get.back();
+      if (result) {
+        showToast(
+          context,
+          'تم الحذف بنجاح',
+          ToastStates.success,
+        );
+      } else {
+        showToast(
+          context,
+          'حدث خطأ أثناء الحذف برجاء المحاوله لاحقًا',
+          ToastStates.error,
+        );
+      }
     }
   }
 

@@ -143,10 +143,6 @@ class _SearchScreenState extends State<SearchScreen> {
                             () => PhoneDetailsScreen(
                               phone: result,
                               docId: _firebaseController.getDocId(result),
-                              needVerification:
-                                  widget.isLostPhonesScreen == null
-                                      ? true
-                                      : false,
                             ),
                           ),
                           child: PhoneContainer(

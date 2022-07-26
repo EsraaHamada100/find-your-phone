@@ -507,28 +507,33 @@ class SettingsScreen extends StatelessWidget {
                         if (formData!.validate()) {
                           changePaymentDataFormKey.currentState!.save();
                           Get.back();
-                          showLoading(context);
-                          bool result = await adminController.changePaymentData(
-                            paymentNumber: paymentNumberController.text.trim(),
-                            paymentAmount: double.parse(
-                              paymentAmountController.text,
-                            ),
-                          );
-                          if (result) {
-                            Get.back();
-                            showToast(
-                              context,
-                              'تم تغيير بيانات الدفع بنجاح',
-                              ToastStates.success,
+                          bool isConnected = await _controller
+                              .checkInternetConnection(context);
+                          if (isConnected) {
+                            bool result =
+                                await adminController.changePaymentData(
+                              paymentNumber:
+                                  paymentNumberController.text.trim(),
+                              paymentAmount: double.parse(
+                                paymentAmountController.text,
+                              ),
                             );
-                          } else {
-                            Get.back();
-                            showToast(
-                              context,
-                              'حدث خطأ أثناء حفظ البيانات يرجى'
-                              ' المحاوله لاحقًا',
-                              ToastStates.error,
-                            );
+                            if (result) {
+                              Get.back();
+                              showToast(
+                                context,
+                                'تم تغيير بيانات الدفع بنجاح',
+                                ToastStates.success,
+                              );
+                            } else {
+                              Get.back();
+                              showToast(
+                                context,
+                                'حدث خطأ أثناء حفظ البيانات يرجى'
+                                ' المحاوله لاحقًا',
+                                ToastStates.error,
+                              );
+                            }
                           }
                         }
                       },
@@ -590,12 +595,12 @@ class SettingsScreen extends StatelessWidget {
                   if (val == null) {
                     return "اكتب بريد الكترونى";
                   }
-                  if(!EmailValidator.validate(val)){
+                  if (!EmailValidator.validate(val)) {
                     return "اكتب بريد الكترونى صالح";
                   }
                   return null;
                 },
-                onSaved: (value){
+                onSaved: (value) {
                   email = value!;
                 },
                 icon: Icons.email,
@@ -610,32 +615,37 @@ class SettingsScreen extends StatelessWidget {
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(buttonColor),
                         foregroundColor:
-                        MaterialStateProperty.all(Colors.white),
+                            MaterialStateProperty.all(Colors.white),
                       ),
                       onPressed: () async {
                         var formData = changeConnectEmailFormKey.currentState;
                         if (formData!.validate()) {
                           changeConnectEmailFormKey.currentState!.save();
                           Get.back();
-                          showLoading(context);
-                          bool result = await adminController.changeConnectEmail(
-                            email: email,
-                          );
-                          if (result) {
-                            Get.back();
-                            showToast(
-                              context,
-                              'تم تغيير البريد الإلكترونى بنجاح',
-                              ToastStates.success,
+                          bool isConnected = await _controller
+                              .checkInternetConnection(context);
+                          if (isConnected) {
+                            print('connected');
+                            bool result =
+                                await adminController.changeConnectEmail(
+                              email: email,
                             );
-                          } else {
-                            Get.back();
-                            showToast(
-                              context,
-                              'حدث خطأ أثناء حفظ البيانات يرجى'
-                                  ' المحاوله لاحقًا',
-                              ToastStates.error,
-                            );
+                            if (result) {
+                              Get.back();
+                              showToast(
+                                context,
+                                'تم تغيير البريد الإلكترونى بنجاح',
+                                ToastStates.success,
+                              );
+                            } else {
+                              Get.back();
+                              showToast(
+                                context,
+                                'حدث خطأ أثناء حفظ البيانات يرجى'
+                                ' المحاوله لاحقًا',
+                                ToastStates.error,
+                              );
+                            }
                           }
                         }
                       },
@@ -649,7 +659,7 @@ class SettingsScreen extends StatelessWidget {
                     child: OutlinedButton(
                       style: ButtonStyle(
                         foregroundColor:
-                        MaterialStateProperty.all(defaultColor),
+                            MaterialStateProperty.all(defaultColor),
                       ),
                       onPressed: () {
                         Get.back();

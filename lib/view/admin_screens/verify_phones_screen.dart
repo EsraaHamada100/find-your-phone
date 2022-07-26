@@ -28,21 +28,14 @@ class VerifyPhonesScreen extends StatelessWidget {
                   shrinkWrap: true,
                   children: [
                     for(var phone in _firebaseController.needVerification)
-                      GestureDetector(
-                        onTap: () => Get.to(() => PhoneDetailsScreen(
-                          phone: phone,
-                          docId: _firebaseController.getDocId(phone),
-                          needVerification: true,
-                        ),),
-                        child: PhoneContainer(
-                          phone: phone,
-                          phoneType: phone.phoneType,
-                          image: phone.imageUrls.isNotEmpty
-                              ? phone.imageUrls[0]
-                              : null,
-                          IMME1: phone.IMME1,
-                          IMME2: phone.IMME2,
-                        ),
+                      PhoneContainer(
+                        phone: phone,
+                        phoneType: phone.phoneType,
+                        image: phone.imageUrls.isNotEmpty
+                            ? phone.imageUrls[0]
+                            : null,
+                        IMME1: phone.IMME1,
+                        IMME2: phone.IMME2,
                       ),
                   ],
                   ),
