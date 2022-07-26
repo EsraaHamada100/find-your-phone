@@ -26,21 +26,23 @@ class ArticlesScreen extends StatelessWidget {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   deleteArticle(BuildContext context, int index) async {
     Get.back();
-    showLoading(context);
-    bool result = await _adminController.deleteLegalActionArticle(index);
-    Get.back();
-    if (result) {
-      showToast(
-        context,
-        'تم الحذف بنجاح',
-        ToastStates.success,
-      );
-    } else {
-      showToast(
-        context,
-        'حدث خطأ أثناء الحذف برجاء المحاوله لاحقًا',
-        ToastStates.error,
-      );
+    bool isConnected = await _controller.checkInternetConnection(context);
+    if (isConnected) {
+      bool result = await _adminController.deleteLegalActionArticle(index);
+      Get.back();
+      if (result) {
+        showToast(
+          context,
+          'تم الحذف بنجاح',
+          ToastStates.success,
+        );
+      } else {
+        showToast(
+          context,
+          'حدث خطأ أثناء الحذف برجاء المحاوله لاحقًا',
+          ToastStates.error,
+        );
+      }
     }
   }
 
@@ -243,20 +245,27 @@ class ArticlesScreen extends StatelessWidget {
                         var formData = formKey.currentState;
                         if (formData!.validate()) {
                           formKey.currentState!.save();
-                          Get.back();
-                          showLoading(context);
-                          bool result =
-                              await _adminController.addLegalActionArticle(
-                                  title: title, content: description);
-                          Get.back();
-                          if (result) {
-                            showToast(context, 'تمت إضافة المقالة بنجاح',
-                                ToastStates.success);
-                          } else {
-                            showToast(
-                                context,
-                                'لم نستطع إضافة المقالة يرجى المحاولة لاحقًا',
-                                ToastStates.error);
+                          bool isConnected = await _controller
+                              .checkInternetConnection(context);
+                          if (isConnected) {
+                            Get.back();
+                            Get.back();
+                            bool result =
+                                await _adminController.addLegalActionArticle(
+                                    title: title, content: description);
+                            Get.back();
+                            if (result) {
+                              showToast(context, 'تمت إضافة المقالة بنجاح',
+                                  ToastStates.success);
+                            } else {
+                              showToast(
+                                  context,
+                                  'لم نستطع إضافة المقالة يرجى المحاولة لاحقًا',
+                                  ToastStates.error);
+                            }
+                          }else {
+                            // to get back from bottomSheet
+                            Get.back();
                           }
                         }
                       },

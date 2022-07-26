@@ -47,15 +47,15 @@ class FirebaseController extends GetxController {
       print(doc.id);
       print(doc.time);
       for (int i = doc.phonesData.length - 1; i >= 0; i--) {
-        if (doc.phonesData[i].isLostPhone &&
-            doc.phonesData[i].paymentNumber == null) {
-          lostPhones.add(doc.phonesData[i]);
-        } else {
-          foundPhones.add(doc.phonesData[i]);
-        }
         if (doc.phonesData[i].paymentNumber != null) {
           needVerification.add(doc.phonesData[i]);
           print('we add a phone to it ${needVerification.length}');
+          continue;
+        }
+        if (doc.phonesData[i].isLostPhone) {
+          lostPhones.add(doc.phonesData[i]);
+        } else {
+          foundPhones.add(doc.phonesData[i]);
         }
       }
       // doc.phonesData.forEach((phone) {

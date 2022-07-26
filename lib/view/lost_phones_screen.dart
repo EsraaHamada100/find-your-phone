@@ -39,22 +39,14 @@ class LostPhonesScreen extends StatelessWidget {
                     shrinkWrap: true,
                     children: [
                       for (PhoneData phone in _firebaseController.lostPhones)
-                          GestureDetector(
-                            onTap: () => Get.to(
-                              () => PhoneDetailsScreen(
-                                phone: phone,
-                                docId: _firebaseController.getDocId(phone),
-                              ),
-                            ),
-                            child: PhoneContainer(
-                              phone: phone,
-                              phoneType: phone.phoneType,
-                              image: phone.imageUrls.isNotEmpty
-                                  ? phone.imageUrls[0]
-                                  : null,
-                              IMME1: phone.IMME1,
-                              IMME2: phone.IMME2,
-                            ),
+                          PhoneContainer(
+                            phone: phone,
+                            phoneType: phone.phoneType,
+                            image: phone.imageUrls.isNotEmpty
+                                ? phone.imageUrls[0]
+                                : null,
+                            IMME1: phone.IMME1,
+                            IMME2: phone.IMME2,
                           ),
                     ],
                   ),

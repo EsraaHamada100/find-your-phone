@@ -1,3 +1,4 @@
+import 'package:find_your_phone/control/app_controller.dart';
 import 'package:find_your_phone/control/sign_controller.dart';
 import 'package:find_your_phone/view/my_phones_screen.dart';
 import 'package:find_your_phone/view/signin_screen.dart';
@@ -15,6 +16,7 @@ class UserProfileScreen extends StatelessWidget {
   final String email;
   final String? image;
   final SignController _signController = Get.find<SignController>();
+  final AppController _appController = Get.find<AppController>();
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -39,18 +41,19 @@ class UserProfileScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               image != null
-                  ? CircleAvatar(
-                      radius: 75,
-                      backgroundImage: NetworkImage(
-                        image!,
-                      ),
-                    )
+                  ? ClipRRect(
+                        borderRadius: BorderRadius.circular(1000),
+                        child: Image.network(
+                          image!,
+                          fit: BoxFit.fill,
+                          errorBuilder: (BuildContext context, Object exception,
+                              StackTrace? stackTrace) {
+                            return noUserImage();
+                          },
+                        ),
+                      )
                   : // Center(
-                  Icon(
-                      Icons.account_circle_rounded,
-                      size: 120,
-                      color: defaultColor,
-                    ),
+                  noUserImage(),
               Text(
                 '$name',
                 style: Theme.of(context).textTheme.headline6,
@@ -69,7 +72,7 @@ class UserProfileScreen extends StatelessWidget {
                 text: 'منشوراتي',
                 icon: Icons.arrow_forward_ios,
                 onTap: () {
-                  Get.to(()=>MyPhones());
+                  Get.to(() => MyPhones());
                 },
               ),
               SizedBox(
@@ -126,34 +129,14 @@ class UserProfileScreen extends StatelessWidget {
       ),
     );
   }
-  //
-  // void confirmSignOut(BuildContext context) {
-  //   showDialog(
-  //       context: context,
-  //       builder: (BuildContext ctx) {
-  //         return Directionality(
-  //           textDirection: TextDirection.rtl,
-  //           child: AlertDialog(
-  //             title: const Text('تسجيل الخروج'),
-  //             content: const Text('هل تريد تسجيل الخروج ؟'),
-  //             actionsAlignment: MainAxisAlignment.spaceAround,
-  //             actions: [
-  //               // The "Yes" button
-  //               TextButton(
-  //                   onPressed: () {
-  //                     _signController.signOut();
-  //                     Get.offAll(() => SignInScreen());
-  //                   },
-  //                   child: const Text('نعم')),
-  //               TextButton(
-  //                   onPressed: () {
-  //                     // Close the dialog
-  //                     Navigator.of(context).pop();
-  //                   },
-  //                   child: const Text('لا')),
-  //             ],
-  //           ),
-  //         );
-  //       });
-  // }
+
+  // this icon will display when  the user has no image
+  // or there is an error when loading the image
+  Icon noUserImage() {
+    return Icon(
+      Icons.account_circle_rounded,
+      size: 120,
+      color: defaultColor,
+    );
+  }
 }

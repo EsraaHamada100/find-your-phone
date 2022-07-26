@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:find_your_phone/control/admin_controller.dart';
+import 'package:find_your_phone/control/app_controller.dart';
 import 'package:find_your_phone/control/firebase_controller.dart';
 import 'package:find_your_phone/model/phone_data.dart';
 import 'package:find_your_phone/shared/colors.dart';
@@ -21,21 +22,20 @@ class PhoneDetailsScreen extends StatelessWidget {
     required this.phone,
     required this.docId,
     this.myPhone,
-    this.needVerification = false,
+    // this.needVerification = false,
   }) : super(key: key);
   final PhoneData phone;
   final String docId;
   final bool? myPhone;
-  bool needVerification;
   final AdminController _adminController = Get.find<AdminController>();
   final FirebaseController _firebaseController = Get.find<FirebaseController>();
+  final AppController _appController = Get.find<AppController>();
   // final bool isLostPhone;
   /// delete phone
   void deletePhone(
     BuildContext context,
   ) async {
     Get.back();
-    showLoading(context);
     bool isDeleted =
         await _firebaseController.deletePhoneFromFirebase(docId, phone);
     if (!isDeleted) {
@@ -108,7 +108,7 @@ class PhoneDetailsScreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  // phoneImages(context,phone.imageUrls),
+                  phoneImages(context, phone.imageUrls),
                   const SizedBox(
                     height: 40,
                   ),
@@ -235,15 +235,22 @@ class PhoneDetailsScreen extends StatelessWidget {
                           context,
                           title: 'حذف الهاتف',
                           content: 'هل أنت متأكد من أنك تريد حذف الهاتف ؟',
-                          confirmFunction: () {
-                            deletePhone(context);
+                          confirmFunction: () async {
+                            bool result = await _appController
+                                .checkInternetConnection(context);
+                            if (result) {
+                              deletePhone(context);
+                            }else {
+                              // to return back from confirmation dialog
+                              Get.back();
+                            }
                           },
                         );
                       },
                       child: Icon(Icons.delete),
                       backgroundColor: Colors.red,
                     ),
-                    if (needVerification && _adminController.isAdmin)
+                    if (phone.paymentNumber != null && _adminController.isAdmin)
                       FloatingActionButton(
                         heroTag: 'btn2',
                         onPressed: () {
@@ -254,18 +261,27 @@ class PhoneDetailsScreen extends StatelessWidget {
                             title: 'إضافة الهاتف',
                             content: 'هل أنت متأكد من أنك تريد إضافة الهاتف ؟',
                             confirmFunction: () async {
-                              showLoading(context);
-                              bool verified = await _adminController
-                                  .verifyPhone(docId, phone);
-                              if (verified) {
-                                Get.offAll(() => VerifyPhonesScreen());
-                                // ignore: use_build_context_synchronously
-                                showToast(context, 'تم إضافة الهاتف بنجاح',
-                                    ToastStates.success);
-                              } else {
-                                // ignore: use_build_context_synchronously
-                                showToast(context, 'حدث خطأ أثناء إضافة الهاتف',
-                                    ToastStates.error);
+                              bool result = await _appController
+                                  .checkInternetConnection(context);
+
+                              if (result) {
+                                bool verified = await _adminController
+                                    .verifyPhone(docId, phone);
+                                if (verified) {
+                                  Get.offAll(() => VerifyPhonesScreen());
+                                  // ignore: use_build_context_synchronously
+                                  showToast(context, 'تم إضافة الهاتف بنجاح',
+                                      ToastStates.success);
+                                } else {
+                                  // ignore: use_build_context_synchronously
+                                  showToast(
+                                      context,
+                                      'حدث خطأ أثناء إضافة الهاتف',
+                                      ToastStates.error);
+                                }
+                              }else {
+                                // to return back from confirmation dialog
+                                Get.back();
                               }
                             },
                           );

@@ -35,33 +35,23 @@ class FoundPhonesScreen extends StatelessWidget {
                   EdgeInsets.only(bottom: 40, right: 20, left: 20, top: 20),
               child: Container(
                 width: double.maxFinite,
-                child: Column(
-                  children: [
-                    Obx(
-                      () => ListView(
-                        shrinkWrap: true,
-                        children: [
-                          for (PhoneData phone
-                              in _firebaseController.foundPhones)
-                            GestureDetector(
-                              onTap: () => Get.to(() => PhoneDetailsScreen(
-                                    phone: phone,
-                                    docId: _firebaseController.getDocId(phone),
-                                  )),
-                              child: PhoneContainer(
-                                phone: phone,
-                                phoneType: phone.phoneType,
-                                image: phone.imageUrls.isNotEmpty
-                                    ? phone.imageUrls[0]
-                                    : null,
-                                IMME1: phone.IMME1,
-                                IMME2: phone.IMME2,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
+                child: Obx(
+                  () => ListView(
+                    shrinkWrap: true,
+                    children: [
+                      for (PhoneData phone
+                          in _firebaseController.foundPhones)
+                        PhoneContainer(
+                          phone: phone,
+                          phoneType: phone.phoneType,
+                          image: phone.imageUrls.isNotEmpty
+                              ? phone.imageUrls[0]
+                              : null,
+                          IMME1: phone.IMME1,
+                          IMME2: phone.IMME2,
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),

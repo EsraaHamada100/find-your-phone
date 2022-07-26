@@ -1,7 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:find_your_phone/control/add_phone_controller.dart';
 import 'package:find_your_phone/control/admin_controller.dart';
+import 'package:find_your_phone/control/app_controller.dart';
 import 'package:find_your_phone/control/sign_controller.dart';
 import 'package:find_your_phone/shared/colors.dart';
 import 'package:find_your_phone/shared/reusable_widgets/components.dart';
@@ -23,6 +26,7 @@ class AddPhone extends StatelessWidget {
   final AddPhoneController _controller = Get.find<AddPhoneController>();
   final AdminController _adminController = Get.find<AdminController>();
   final SignController _signController = Get.find<SignController>();
+  final AppController _appController = Get.find<AppController>();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   GlobalKey<FormState> formKey2 = GlobalKey<FormState>();
   late String type;
@@ -46,9 +50,8 @@ class AddPhone extends StatelessWidget {
   addPhoneData(BuildContext context) async {
     if (validateData()) {
       formKey.currentState!.save();
-      showLoading(context);
       DateTime now = DateTime.now();
-
+      showLoading(context);
       await _controller.addPhone(
         phoneType: type,
         phoneDescription: description,
@@ -335,27 +338,37 @@ class AddPhone extends StatelessWidget {
                             SizedBox(height: 40),
                             CustomButton(
                               text: 'أضف الهاتف',
-                              onPressed: () {
+                              onPressed: () async {
                                 if (validateData()) {
-                                  if (_adminController.isAdmin ||
-                                      _adminController.adminDocument!.isFree) {
-                                    addPhoneData(context);
-                                  } else {
-                                    customAlertDialog(
-                                      context,
-                                      title: 'إضافة هاتف',
-                                      content: 'يجب دفع مبلغ'
-                                          ' ${_adminController.adminDocument!.paymentAmount} '
-                                          'جنيه لإضافة هاتفك,'
-                                          ' هل تريد إكمال عملية الإضافة ؟',
-                                      confirmFunction: () {
-                                        Get.back();
-                                        paymentBottomSheet(
-                                          context,
-                                          () => vodafonePayment(context),
-                                        );
-                                      },
-                                    );
+                                  bool result = await _appController
+                                      .checkInternetConnection(context);
+                                  // if there is an internet connection
+                                  if (result) {
+                                    // if the user is tha admin or there is 100%  discount
+                                    Get.back();
+                                    if (!isLostPhone ||
+                                        _adminController
+                                            .adminDocument!.isFree ||
+                                        _adminController.isAdmin) {
+                                      addPhoneData(context);
+                                    } else {
+                                      // if the user is not an admin
+                                      customAlertDialog(
+                                        context,
+                                        title: 'إضافة هاتف',
+                                        content: 'يجب دفع مبلغ'
+                                            ' ${_adminController.adminDocument!.paymentAmount} '
+                                            'جنيه لإضافة هاتفك,'
+                                            ' هل تريد إكمال عملية الإضافة ؟',
+                                        confirmFunction: () {
+                                          Get.back();
+                                          paymentBottomSheet(
+                                            context,
+                                            () => vodafonePayment(context),
+                                          );
+                                        },
+                                      );
+                                    }
                                   }
                                 }
                                 // paymentBottomSheet(context);
@@ -451,7 +464,7 @@ class AddPhone extends StatelessWidget {
                                 addPhoneData(context);
                               }
                             },
-                            child: Text('تم'),
+                            child: const Text('تم'),
                           ),
                         ),
                         const SizedBox(

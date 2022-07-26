@@ -7,7 +7,6 @@ import 'package:find_your_phone/control/firebase_controller.dart';
 import 'package:find_your_phone/control/sign_controller.dart';
 import 'package:find_your_phone/shared/cache/cache_helper.dart';
 import 'package:find_your_phone/shared/colors.dart';
-import 'package:find_your_phone/shared/reusable_widgets/components.dart';
 import 'package:find_your_phone/view/No_internet_screen.dart';
 import 'package:find_your_phone/view/lost_phones_screen.dart';
 import 'package:find_your_phone/view/signin_screen.dart';
@@ -18,7 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:find_your_phone/control/init_controllers.dart' as controllers;
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+
 
 bool isLogin = false;
 bool isOnline = true;

@@ -142,51 +142,51 @@ class CustomNavigationDrawerWidget extends StatelessWidget {
             SizedBox(
               height: 16,
             ),
-            if(!_adminController.isAdmin)
-            Column(
-              children: [
-                Divider(color: Colors.white70),
-                buildMenuItem(
-                  context,
-                  text: 'كيفية استخدام التطبيق',
-                  icon: Icons.question_mark_outlined,
-                  onClicked: () {
-                    // _appController.changeDrawerIndex(4);
-                    Get.to(() => HowToUseOurAppScreen());
-                  },
-                  index: 6,
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                buildMenuItem(
-                  context,
-                  text: 'إدعمنا',
-                  icon: Icons.monetization_on_rounded,
-                  onClicked: () {
-                    // _appController.changeDrawerIndex(5);
-                    Get.to(() => SupportUsScreen());
-                  },
-                  index: 7,
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                buildMenuItem(
-                  context,
-                  text: 'تواصل معنا',
-                  icon: Icons.monetization_on_rounded,
-                  onClicked: () {
-                    // _appController.changeDrawerIndex(5);
-                    Get.to(() => ContactUsScreen());
-                  },
-                  index: 8,
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-              ],
-            ),
+            if (!_adminController.isAdmin)
+              Column(
+                children: [
+                  Divider(color: Colors.white70),
+                  buildMenuItem(
+                    context,
+                    text: 'كيفية استخدام التطبيق',
+                    icon: Icons.question_mark_outlined,
+                    onClicked: () {
+                      // _appController.changeDrawerIndex(4);
+                      Get.to(() => HowToUseOurAppScreen());
+                    },
+                    index: 6,
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  buildMenuItem(
+                    context,
+                    text: 'إدعمنا',
+                    icon: Icons.monetization_on_rounded,
+                    onClicked: () {
+                      // _appController.changeDrawerIndex(5);
+                      Get.to(() => SupportUsScreen());
+                    },
+                    index: 7,
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  buildMenuItem(
+                    context,
+                    text: 'تواصل معنا',
+                    icon: Icons.monetization_on_rounded,
+                    onClicked: () {
+                      // _appController.changeDrawerIndex(5);
+                      Get.to(() => ContactUsScreen());
+                    },
+                    index: 8,
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                ],
+              ),
           ],
         ),
       ),
@@ -277,23 +277,34 @@ class CustomNavigationDrawerWidget extends StatelessWidget {
                   color: Colors.indigo[50],
                 ),
                 child: imageURL == null
-                    ? Center(
-                        child: Icon(
-                        Icons.account_circle_rounded,
-                        size: 75,
-                        color: defaultColor,
-                      ))
+                    ? noUserImage()
                     : ClipRRect(
                         borderRadius: BorderRadius.circular(1000),
                         child: Image.network(
                           imageURL,
                           fit: BoxFit.fill,
-                        )),
+                          errorBuilder: (BuildContext context, Object exception,
+                              StackTrace? stackTrace) {
+                            return noUserImage();
+                          },
+                        ),
+                      ),
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  // this function will be used when the user sign in with email and password
+  // or there is no internet to upload user image
+  Center noUserImage() {
+    return Center(
+        child: Icon(
+      Icons.account_circle_rounded,
+      size: 75,
+      color: defaultColor,
+    ));
   }
 }

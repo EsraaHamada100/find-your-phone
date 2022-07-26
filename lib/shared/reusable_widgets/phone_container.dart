@@ -1,5 +1,6 @@
 import 'package:find_your_phone/control/app_controller.dart';
 import 'package:find_your_phone/control/firebase_controller.dart';
+import 'package:find_your_phone/control/sign_controller.dart';
 import 'package:find_your_phone/model/phone_data.dart';
 import 'package:find_your_phone/shared/reusable_widgets/components.dart';
 import 'package:flutter/material.dart';
@@ -23,16 +24,22 @@ class PhoneContainer extends StatelessWidget {
   PhoneData phone;
   final FirebaseController _firebaseController = Get.find<FirebaseController>();
   final AppController _appController = Get.find<AppController>();
+  final SignController _signController = Get.find<SignController>();
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Get.to(
+      onTap: () async {
+        bool result = await _appController.checkInternetConnection(context);
+        if(result) {
+          Get.back();
+          Get.to(
           () => PhoneDetailsScreen(
+            myPhone: phone.ownerId == _signController.userId?true:false,
             phone: phone,
             docId: _firebaseController.getDocId(phone),
           ),
         );
+        }
       },
       child: Container(
         margin: EdgeInsets.only(bottom: 15),

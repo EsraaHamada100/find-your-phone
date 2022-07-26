@@ -61,4 +61,10 @@ class AppController extends GetxController {
     showLoading(context);
     return true;
   }
+
+  bool circularAvatarError = false;
+  setCircularAvatarError(bool value){
+    circularAvatarError = value;
+    update();
+  }
 }
