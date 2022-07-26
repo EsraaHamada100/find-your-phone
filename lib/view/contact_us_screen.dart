@@ -1,22 +1,21 @@
 import 'package:find_your_phone/control/admin_controller.dart';
-import 'package:find_your_phone/shared/colors.dart';
-import 'package:find_your_phone/shared/reusable_widgets/app_bar.dart';
 import 'package:find_your_phone/shared/reusable_widgets/custom_button.dart';
-import 'package:find_your_phone/shared/reusable_widgets/add_phone_input_field.dart';
-import 'package:find_your_phone/shared/reusable_widgets/navigation_drawer_widget.dart';
+
 import 'package:find_your_phone/shared/reusable_widgets/scrollable_transparent_app_var.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import '../shared/reusable_widgets/components.dart';
-import 'lost_phones_screen.dart';
+import '../control/app_controller.dart';
+
 
 class ContactUsScreen extends StatelessWidget {
   ContactUsScreen({Key? key}) : super(key: key);
   // ScrollController _scrollController =
   //     ScrollController(initialScrollOffset: 1.0);
   final AdminController _adminController = Get.find<AdminController>();
+  AppController _appController = Get.find<AppController>();
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -24,7 +23,12 @@ class ContactUsScreen extends StatelessWidget {
       child: Scaffold(
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            CustomScrollableTransparentAppBar(appBarTitle: 'تواصل معنا'),
+            _appController.isDark == true
+            ?
+            CustomScrollableTransparentAppBar(appBarTitle: 'تواصل معنا',
+            backgroundColor: Colors.black26,)
+                : CustomScrollableTransparentAppBar(appBarTitle: 'تواصل معنا',
+              backgroundColor:Colors.indigo[50],)
           ],
           body: SafeArea(
             child: Padding(
@@ -45,11 +49,7 @@ class ContactUsScreen extends StatelessWidget {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  // InputField(
-                  //   title: '',
-                  //   hint: 'ضع المبلغ الذى تريد التبرع به بالجنيه المصرى',
-                  // ),
-                  SizedBox(
+                  const SizedBox(
                     height: 40,
                   ),
                   Container(
@@ -57,7 +57,15 @@ class ContactUsScreen extends StatelessWidget {
                     height: 60,
                     child: CustomButton(
                       text: 'البريد الإلكترونى للتواصل',
-                      onPressed: () {
+                      onPressed: () async {
+                        String url =
+                            'mailto:to'
+                            '${_adminController.adminDocument!.connectEmail}';
+                        try {
+                          await launchUrl(Uri.parse(url));
+                        } catch (e) {
+                          print(e);
+                        }
                       },
                     ),
                   ),
@@ -72,11 +80,7 @@ class ContactUsScreen extends StatelessWidget {
     );
   }
 
-  // final String assetName = 'assets/images/support_us.svg';
-  Widget svgIcon = SvgPicture.asset(
+  SvgPicture svgIcon = SvgPicture.asset(
     'assets/images/contact_us_image.svg',
-    // color: Colors.red,
-    // semanticsLabel: 'A red up arrow'
   );
-
 }

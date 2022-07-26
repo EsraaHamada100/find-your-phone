@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import '../colors.dart';
 import '../enums.dart';
 import 'custom_sign_input_field.dart';
 
-
-
+const String defaultErrorMessage = 'حدث خطأ ما يرجى المحاوله فى وقت لاحق';
 showLoading(context) {
   return showDialog(
       context: context,
@@ -95,20 +96,21 @@ customAlertDialog(BuildContext context,
             actionsAlignment: MainAxisAlignment.spaceAround,
             actions: [
               // The "Yes" button
-              TextButton(onPressed: confirmFunction, child: const Text('نعم')),
+              TextButton(onPressed: confirmFunction, child: Text('نعم')),
               TextButton(
                   onPressed: () {
                     // Close the dialog
                     Navigator.of(context).pop();
                   },
-                  child: const Text('لا')),
+                  child: Text('لا')),
             ],
           ),
         );
       });
 }
 
-customNoActionDialog(
+
+customThanksDialog(
   BuildContext context, {
   required String title,
   required String content,
@@ -139,6 +141,28 @@ customNoActionDialog(
       ),
     ),
   );
+}
+
+customNoActionAlertDialog({
+  required BuildContext context,
+  required String content,
+}) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          content: Text(
+            content,
+            textDirection: TextDirection.rtl,
+            textAlign: TextAlign.center,
+            style: const TextStyle(height: 2),
+          ),
+          contentPadding: const EdgeInsets.all(20),
+        );
+      });
 }
 
 void showToast(BuildContext context, String content, ToastStates state) {
@@ -231,5 +255,68 @@ paymentCard(String svgAssetImage, String text, dynamic Function()? onTap) {
         ),
       ),
     ),
+  );
+}
+
+sendVerificationEmailDialog(BuildContext context, void Function()? onPressed){
+  showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          actions: [
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                            onPressed: onPressed,
+                            child: Text(
+                              ' أرسل إيميل تأكيد اخر',
+                              style: TextStyle(
+                                  color: buttonColor,
+                                  fontWeight: FontWeight.w400),
+                            )),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Get.back(),
+                          child: Text(
+                            'تجاهل',
+                            style: TextStyle(
+                              color: buttonColor,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            )
+          ],
+          actionsAlignment: MainAxisAlignment.spaceAround,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          content: const Text('لم يتم تأكيد هذا الإيميل',
+              textDirection: TextDirection.rtl,
+              textAlign: TextAlign.center),
+        );
+      });
+}
+
+SvgPicture noInternetImage(){
+  return SvgPicture.asset(
+    'assets/images/no-internet-connection.svg',
+    // color: Colors.red,
+    // semanticsLabel: 'A red up arrow'
   );
 }

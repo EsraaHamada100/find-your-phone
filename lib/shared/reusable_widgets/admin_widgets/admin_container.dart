@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+
+import '../../../control/app_controller.dart';
 
 class AdminContainer extends StatelessWidget {
   AdminContainer(
@@ -7,6 +11,7 @@ class AdminContainer extends StatelessWidget {
   String id;
   String name;
   String email;
+  final  AppController _appController = Get.find<AppController>();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,7 +29,7 @@ class AdminContainer extends StatelessWidget {
               spreadRadius: 0)
         ],
         borderRadius: BorderRadius.circular(10),
-        color: Colors.white,
+        color: _appController.isDark?  Colors.black26 : Colors.white,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -53,13 +58,14 @@ class AdminContainer extends StatelessWidget {
                     child: Text(
                       name,
                       style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                            color: Colors.black87,
+                            color:_appController.isDark?  Colors.grey[300] : Colors.black87,
                             fontWeight: FontWeight.bold,
                           ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
+                  SizedBox(height: 10.0,),
                   Expanded(
                     child: Text(
                       'email : $email',

@@ -1,22 +1,16 @@
 import 'package:find_your_phone/control/firebase_controller.dart';
-import 'package:find_your_phone/model/found_phone.dart';
 import 'package:find_your_phone/model/phone_data.dart';
-import 'package:find_your_phone/shared/colors.dart';
-import 'package:find_your_phone/shared/reusable_widgets/components.dart';
-import 'package:find_your_phone/shared/reusable_widgets/phones_list.dart';
-import 'package:find_your_phone/view/law_screen.dart';
 import 'package:find_your_phone/view/phone_details_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../control/app_controller.dart';
-import '../model/lost_phone.dart';
+
 import '../shared/reusable_widgets/app_bar.dart';
 import '../shared/reusable_widgets/navigation_drawer_widget.dart';
 import '../shared/reusable_widgets/phone_container.dart';
 import 'add_phone.dart';
-import 'lost_phones_screen.dart';
+
 
 class FoundPhonesScreen extends StatelessWidget {
   FoundPhonesScreen({Key? key}) : super(key: key);
@@ -55,6 +49,7 @@ class FoundPhonesScreen extends StatelessWidget {
                                     docId: _firebaseController.getDocId(phone),
                                   )),
                               child: PhoneContainer(
+                                phone: phone,
                                 phoneType: phone.phoneType,
                                 image: phone.imageUrls.isNotEmpty
                                     ? phone.imageUrls[0]

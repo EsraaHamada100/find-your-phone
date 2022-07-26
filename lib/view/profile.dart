@@ -4,6 +4,7 @@ import 'package:find_your_phone/view/signin_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../control/app_controller.dart';
 import '../shared/colors.dart';
 import '../shared/reusable_widgets/components.dart';
 
@@ -15,6 +16,8 @@ class UserProfileScreen extends StatelessWidget {
   final String email;
   final String? image;
   final SignController _signController = Get.find<SignController>();
+ final  AppController _appController = Get.find<AppController>();
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -23,15 +26,15 @@ class UserProfileScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(
             'الملف الشخصى',
-            style: TextStyle(color: Colors.grey[700]),
+            style: TextStyle( color:_appController.isDark?  Colors.grey[300] : Colors.black,),
           ),
           centerTitle: true,
-          backgroundColor: secondaryColor,
+          backgroundColor: _appController.isDark? Colors.black54 : secondaryColor,
           elevation: 0,
-          iconTheme: IconThemeData(color: Colors.black),
+          iconTheme: IconThemeData(color: _appController.isDark?  Colors.grey[300] : Colors.black,),
         ),
         body: Container(
-          color: secondaryColor,
+          color:  _appController.isDark? Colors.black26: secondaryColor,
           padding: EdgeInsets.all(20),
           width: double.maxFinite,
           height: double.maxFinite,
@@ -106,7 +109,7 @@ class UserProfileScreen extends StatelessWidget {
       onTap: onTap,
       child: Card(
         elevation: 1,
-        color: Color(0xDFFFFFFF),
+        color:_appController.isDark? Colors.black54 : secondaryColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -118,6 +121,9 @@ class UserProfileScreen extends StatelessWidget {
               Text(
                 text,
                 style: Theme.of(context).textTheme.headline5,
+
+
+
               ),
               Icon(icon),
             ],

@@ -125,7 +125,7 @@ class SupportUsScreen extends StatelessWidget {
                         onPressed: () {
                           Get.back();
                           Get.back();
-                          customNoActionDialog(
+                          customThanksDialog(
                             context,
                             title: 'شكرًا',
                             content: 'شكرًا على دعمك لنا نحن سعيدون جدًا بهذا '

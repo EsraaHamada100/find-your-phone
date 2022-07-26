@@ -2,7 +2,11 @@ import 'package:find_your_phone/view/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../control/app_controller.dart';
+import '../colors.dart';
+
 class CustomAppBar extends StatelessWidget {
+  AppController _appController = Get.find<AppController>();
   CustomAppBar({
     Key? key,
     required this.appBarTitle,
@@ -19,16 +23,19 @@ class CustomAppBar extends StatelessWidget {
   bool searchable;
   @override
   Widget build(BuildContext context) {
-    return SliverAppBar(
+    return _appController.isDark == true ?
+      SliverAppBar(
       centerTitle: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.black26,
       elevation: 0,
       title: Text(
         appBarTitle,
         style: Theme.of(context)
             .textTheme
             .headline6!
-            .copyWith(color: Colors.black54),
+            .copyWith(color: secondaryColor
+        //Colors.white
+          ),
       ),
       // leading: IconButton(
       //   icon: const Icon(Icons.search),
@@ -38,7 +45,8 @@ class CustomAppBar extends StatelessWidget {
       leading: IconButton(
         icon: Icon(
           Icons.menu_outlined,
-          color: Colors.black,
+          color:secondaryColor
+          //Colors.white,
         ),
         onPressed: () => Scaffold.of(context).openDrawer(),
       ),
@@ -54,6 +62,43 @@ class CustomAppBar extends StatelessWidget {
       // actionsIconTheme: IconThemeData(color: Colors.black),
 
       // titleTextStyle: TextStyle(color: Colors.white),
+    ):
+      SliverAppBar(
+    centerTitle: true,
+    backgroundColor: Colors.white,
+    elevation: 0,
+    title: Text(
+    appBarTitle,
+    style: Theme.of(context)
+        .textTheme
+        .headline6!
+        .copyWith(color: Colors.black54),
+    ),
+    // leading: IconButton(
+    //   icon: const Icon(Icons.search),
+    //   onPressed: () {},
+    //   color: Colors.black,
+    // ),
+    leading: IconButton(
+    icon: Icon(
+    Icons.menu_outlined,
+    color: Colors.black,
+    ),
+    onPressed: () => Scaffold.of(context).openDrawer(),
+    ),
+    actions: [
+    searchable || isLostPhonesScreen != null
+    ? IconButton(
+    onPressed: () => Get.to(() =>
+    SearchScreen(isLostPhonesScreen: isLostPhonesScreen)),
+    icon: Icon(Icons.search),
+    )
+        : Container(),
+    ],
+    // actionsIconTheme: IconThemeData(color: Colors.black),
+
+    // titleTextStyle: TextStyle(color: Colors.white),
     );
+
   }
 }

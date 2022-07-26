@@ -19,6 +19,34 @@ class AdminController extends GetxController {
   RxList admins = [].obs;
   final DateTime now = DateTime.now();
 
+  RxList<dynamic> howToUseOurApp = [
+    ArticleData(
+      'هواتف مفقودة',
+      'فى هذه الصفحه ستجد الهواتف المفقودة التى يبحث عنها أصحابها , أذا فقدت هاتفك يمكنك إضافته عن طريق الضغط على + أسفل الصفحة وكتابة بيانات الهاتف  وستقوم بدفع مبلغ رمزي كمصاريف للإضافة و بعدها سيستمر الهاتف فى الظهور حتى بداية نفس الشهر الذي أضيف فيه من العام التالى , كما يمكنك البحث فيها فى حالة أنك وجدت هاتفا وتريد معرفة صاحب الهاتف .',
+      false,
+    ),
+    ArticleData(
+      'هواتف لا يعُرف أصحابها',
+      'فى هذه الصفحه ستجد الهواتف التى تم إيجادها ولم يعثر بعد على أصحابها فإذا كنت قد فقدت هاتفك يمكنك البحث فى هذه الصفحة لترى إذا عثر أحدهم عليه , أو يمكنك إضافة هاتف قد عثرت عليه وتبحث عن صاحبه وتكون الإضافة مجانية تماما .',
+      false,
+    ),
+    ArticleData(
+      'إجراءات قانونية',
+      'فى هذه الصفحه ستجد بعض الإجراءات القانونية التي يمكنك اتخاذها للعثور على هاتفك وهذه الإجراءات يمكنك الإستفاده منها إذا كنت تعيش فى جمهورية مصر العربية .',
+      false,
+    ),
+    ArticleData(
+      'تواصل معنا',
+      'يمكنك الذهاب إلى هذه الصفحه إذا رغبت بتقديم اقتراح أو شكوى وسنكون سعيدين جدا بتلقى اقتراحاتكم وشكاويكم والرد عليها فى أقرب وقت',
+      false,
+    ),
+    ArticleData(
+      'كيفية تسجيل الخروج ',
+      'قم بالضغط على معلومات الحساب الظاهرة في أعلى الشريط الجانبى وسيظهر لك زر يمكنك الضغط عليه لتسجيل الخروج',
+      false,
+    ),
+  ].obs;
+
   /// get the document that has all admin nessecary data including :
   /// payment number , admins list, legal actions list ...etc
   Future<bool> getAdminDocument() async {
@@ -113,9 +141,27 @@ class AdminController extends GetxController {
     }
   }
 
+  // change the email that you allow user to connect on
+  Future<bool> changeConnectEmail({
+    required String email,
+  }) async {
+    bool result = await _firebaseController.changeConnectEmail(email);
+    if (result && adminDocument != null) {
+      adminDocument!.connectEmail = email;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
 // change visibility
-  void changeVisibility(int index) {
+  void changeLegalActionArticleVisibility(int index) {
     legalActions[index].isVisible = !legalActions[index].isVisible;
+    update();
+  }
+
+  void changeHowToUseOurAppArticleVisibility(int index) {
+    howToUseOurApp[index].isVisible = !howToUseOurApp[index].isVisible;
     update();
   }
 
@@ -181,11 +227,12 @@ class AdminController extends GetxController {
         print('we are in delete not verified phones');
         _firebaseController.deletePhoneFromFirebase(
           _firebaseController.getDocId(phone),
-       phone,
+          phone,
         );
         needRemove.add(phone);
       }
     }
+
     /// we removed phones from needVerification we do that here
     /// because we can't remove from the list while iterating it
     for (PhoneData phone in needRemove) {

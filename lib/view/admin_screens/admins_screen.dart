@@ -1,19 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:find_your_phone/control/admin_controller.dart';
-import 'package:find_your_phone/control/firebase_controller.dart';
-import 'package:find_your_phone/control/ui_controller.dart';
-import 'package:find_your_phone/model/found_phone.dart';
-import 'package:find_your_phone/model/phone_data.dart';
-import 'package:find_your_phone/shared/colors.dart';
+import 'package:find_your_phone/control/app_controller.dart';
 import 'package:find_your_phone/shared/enums.dart';
 import 'package:find_your_phone/shared/reusable_widgets/admin_widgets/admin_components.dart';
 import 'package:find_your_phone/shared/reusable_widgets/components.dart';
-import 'package:find_your_phone/shared/reusable_widgets/phones_list.dart';
-import 'package:find_your_phone/view/law_screen.dart';
-import 'package:find_your_phone/view/lost_phones_screen.dart';
-import 'package:find_your_phone/view/phone_details_screen.dart';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -21,15 +12,13 @@ import '../../model/admin_data.dart';
 import '../../shared/reusable_widgets/admin_widgets/admin_container.dart';
 import '../../shared/reusable_widgets/app_bar.dart';
 import '../../shared/reusable_widgets/navigation_drawer_widget.dart';
-import '../../shared/reusable_widgets/phone_container.dart';
-import '../add_phone.dart';
 
 class AdminsScreen extends StatelessWidget {
   AdminsScreen({Key? key}) : super(key: key);
   var scaffoldKey = GlobalKey<ScaffoldState>();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final AdminController _adminController = Get.find<AdminController>();
-  final UIController _uiController = Get.find<UIController>();
+  final AppController _appController = Get.find<AppController>();
 
   deleteAdmin(BuildContext context, AdminData admin) async {
     Get.back();
@@ -98,16 +87,16 @@ class AdminsScreen extends StatelessWidget {
             ),
           ),
         ),
-        floatingActionButton: GetBuilder<UIController>(builder: (_) {
+        floatingActionButton: GetBuilder<AppController>(builder: (_) {
           return Padding(
             padding: EdgeInsets.all(20),
             child: FloatingActionButton(
               elevation: 5,
-              child: Icon(_uiController.addAdminFloatingButton
+              child: Icon(_appController.addAdminFloatingButton
                   ? Icons.add
                   : Icons.close),
               onPressed: () {
-                if (_uiController.addAdminFloatingButton) {
+                if (_appController.addAdminFloatingButton) {
                   addAdminBottomSheet(
                     context,
                     scaffoldKey,
@@ -116,7 +105,7 @@ class AdminsScreen extends StatelessWidget {
                 } else {
                   Get.back();
                 }
-                _uiController.changeAddAdminFloatingButton();
+                _appController.changeAddAdminFloatingButton();
               },
             ),
           );

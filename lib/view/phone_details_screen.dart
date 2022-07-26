@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 
+import '../control/app_controller.dart';
 import '../shared/enums.dart';
 
 class PhoneDetailsScreen extends StatelessWidget {
@@ -29,6 +30,7 @@ class PhoneDetailsScreen extends StatelessWidget {
   bool needVerification;
   final AdminController _adminController = Get.find<AdminController>();
   final FirebaseController _firebaseController = Get.find<FirebaseController>();
+  final  AppController _appController = Get.find<AppController>();
   // final bool isLostPhone;
   /// delete phone
   void deletePhone(
@@ -95,12 +97,12 @@ class PhoneDetailsScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(
             'تفاصيل الهاتف',
-            style: TextStyle(color: Colors.grey[700]),
+            style: TextStyle(color:_appController.isDark? Colors.white : Colors.grey[700]),
           ),
           centerTitle: true,
-          backgroundColor: secondaryColor,
+          backgroundColor:_appController.isDark? Colors.black26 : secondaryColor,
           elevation: 0,
-          iconTheme: const IconThemeData(color: Colors.black),
+          iconTheme:  IconThemeData(color:_appController.isDark? Colors.white : Colors.black),
         ),
         body: SafeArea(
           child: Padding(
@@ -108,7 +110,7 @@ class PhoneDetailsScreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  phoneImages(phone.imageUrls),
+                  phoneImages(context,phone.imageUrls),
                   const SizedBox(
                     height: 40,
                   ),
@@ -116,10 +118,10 @@ class PhoneDetailsScreen extends StatelessWidget {
                     width: double.maxFinite,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 15, vertical: 30),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(50)),
-                      color: Colors.white,
+                      color:_appController.isDark? darkColor2: Colors.white,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,7 +272,6 @@ class PhoneDetailsScreen extends StatelessWidget {
                             },
                           );
                         },
-
                         backgroundColor: Colors.green,
                         child: const Icon(
                           Icons.check_outlined,
@@ -284,17 +285,21 @@ class PhoneDetailsScreen extends StatelessWidget {
     );
   }
 
-  CarouselSlider phoneImages(List<String> phoneImages) {
+  CarouselSlider phoneImages(BuildContext context, List<String> phoneImages) {
     return CarouselSlider(
       items: phoneImages.isNotEmpty
           ? phoneImages
               .map(
                 (image) => ClipRRect(
                   borderRadius: BorderRadius.circular(5),
-                  child: Image(
+                  child: FadeInImage(
                     image: NetworkImage(image.toString()),
-                    width: double.maxFinite,
-                    fit: BoxFit.cover,
+                    placeholder: AssetImage("assets/images/no_phone.jpg"),
+                    imageErrorBuilder: (context, error, stackTrace) {
+                      return noInternetImage();
+                    },
+                    // width: double.maxFinite,
+                    fit: BoxFit.contain,
                   ),
                 ),
               )
@@ -310,7 +315,7 @@ class PhoneDetailsScreen extends StatelessWidget {
               ),
             ],
       options: CarouselOptions(
-        height: 270,
+        height: MediaQuery.of(context).size.height * 0.5,
         enableInfiniteScroll: false,
         // that will make the image take all the slider width
         // if this is 0.8 or something else some other photos

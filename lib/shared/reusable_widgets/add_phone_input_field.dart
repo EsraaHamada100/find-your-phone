@@ -4,6 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 
+import '../../control/app_controller.dart';
+import '../colors.dart';
+
 class AddPhoneInputField extends StatelessWidget {
   AddPhoneInputField({
     Key? key,
@@ -24,6 +27,7 @@ class AddPhoneInputField extends StatelessWidget {
   final bool arabicText;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
+ final  AppController _appController = Get.find<AppController>();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,7 +40,7 @@ class AddPhoneInputField extends StatelessWidget {
             child: Text(
               title,
               style: Theme.of(context).textTheme.headline6!.copyWith(
-                    color: Colors.black54,
+                    color:_appController.isDark? secondaryColor : Colors.black54,
                   ),
             ),
           ),

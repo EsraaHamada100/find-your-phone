@@ -8,3 +8,9 @@ final Color? selectedItemColor = Colors.indigo[200];
 
 final Color? buttonColor = Colors.indigo[300];
 
+final Color? darkColor1 = Colors.black12;
+
+final Color? darkColor2 = Colors.black26;
+
+
+

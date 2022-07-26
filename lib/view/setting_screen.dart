@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:email_validator/email_validator.dart';
 import 'package:find_your_phone/control/app_controller.dart';
 import 'package:find_your_phone/shared/colors.dart';
 import 'package:find_your_phone/shared/enums.dart';
@@ -18,9 +19,11 @@ import '../shared/reusable_widgets/custom_sign_input_field.dart';
 class SettingsScreen extends StatelessWidget {
   SettingsScreen({Key? key}) : super(key: key);
   // var scaffoldKey = GlobalKey<ScaffoldState>();
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> changePaymentDataFormKey = GlobalKey<FormState>();
+  GlobalKey<FormState> changeConnectEmailFormKey = GlobalKey<FormState>();
   final AdminController adminController = Get.find<AdminController>();
   final AppController _controller = Get.find<AppController>();
+
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +32,8 @@ class SettingsScreen extends StatelessWidget {
       child: Scaffold(
         body: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            CustomAppBar(appBarTitle: 'الإعدادات'),
+            CustomAppBar(appBarTitle: 'الإعدادات',
+            ),
           ],
           body: SafeArea(
             child: Padding(
@@ -38,10 +42,12 @@ class SettingsScreen extends StatelessWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                     Text(
                       'اللغة  ( language )',
                       style: TextStyle(
-                        color: Colors.grey,
+
+                         color: _controller.isDark ? secondaryColor: Colors.grey,
+                       // color: Colors.grey,
                         fontSize: 20,
                       ),
                       textAlign: TextAlign.start,
@@ -50,7 +56,7 @@ class SettingsScreen extends StatelessWidget {
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        color: Colors.white,
+                        color: _controller.isDark? darkColor1: Colors.white,
                       ),
                       padding:
                           EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -58,7 +64,8 @@ class SettingsScreen extends StatelessWidget {
                         isExpanded: true,
                         hint: Text(
                           _controller.selectedLanguage,
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16
+                          , color: _controller.isDark ? secondaryColor: Colors.black54,),
                         ),
                         icon: Icon(
                           Icons.keyboard_arrow_down,
@@ -92,10 +99,10 @@ class SettingsScreen extends StatelessWidget {
                     const SizedBox(
                       height: 20,
                     ),
-                    const Text(
+                     Text(
                       'الثيمات',
                       style: TextStyle(
-                        color: Colors.grey,
+                        color: _controller.isDark ? secondaryColor: Colors.grey,
                         fontSize: 20,
                       ),
                       textAlign: TextAlign.start,
@@ -104,13 +111,17 @@ class SettingsScreen extends StatelessWidget {
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        color: Colors.white,
+                        color: _controller.isDark? darkColor1: Colors.white,
                       ),
                       padding: EdgeInsets.all(10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('الوضع الداكن'),
+                           Text('الوضع الداكن',
+                        style: TextStyle(
+                          color: _controller.isDark ? secondaryColor: Colors.black54,
+
+                          ),),
                           Switch(
                             activeColor: defaultColor,
                             value: _controller.isDark,
@@ -123,26 +134,30 @@ class SettingsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     if (adminController.isAdmin)
-                      Center(
-                        child: OutlinedButton(
-                          style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(defaultColor),
-                            foregroundColor:
-                                MaterialStateProperty.all(Colors.white),
-                            padding: MaterialStateProperty.all(
-                              const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 10,
-                              ),
-                            ),
-                            elevation: MaterialStateProperty.all(2),
+                      Column(
+                        children: [
+                          adminButton(
+                            context,
+                            'تغيير بيانات الدفع',
+                            () {
+                              customBottomSheet(
+                                context,
+                                changePaymentDataForm(context),
+                              );
+                            },
                           ),
-                          onPressed: () {
-                            customBottomSheet(context, form(context));
-                          },
-                          child: Text('تغيير بيانات الدفع'),
-                        ),
+                          SizedBox(height: 20),
+                          adminButton(
+                            context,
+                            'تغير البريد الإلكترونى للتواصل',
+                            () {
+                              customBottomSheet(
+                                context,
+                                changeConnectEmailForm(context),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                   ],
                 );
@@ -151,6 +166,32 @@ class SettingsScreen extends StatelessWidget {
           ),
         ),
         drawer: CustomNavigationDrawerWidget(),
+      ),
+    );
+  }
+
+  Widget adminButton(
+    BuildContext context,
+    String buttonText,
+    void Function()? onPressed,
+  ) {
+    return Center(
+      child: OutlinedButton(
+        style: ButtonStyle(
+          minimumSize:
+              MaterialStateProperty.all(const Size(double.maxFinite, 10)),
+          backgroundColor: MaterialStateProperty.all(defaultColor),
+          foregroundColor: MaterialStateProperty.all(Colors.white),
+          padding: MaterialStateProperty.all(
+            const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 10,
+            ),
+          ),
+          elevation: MaterialStateProperty.all(2),
+        ),
+        onPressed: onPressed,
+        child: Text(buttonText),
       ),
     );
   }
@@ -351,7 +392,7 @@ class SettingsScreen extends StatelessWidget {
   //   );
   // }
   /// change payment data form
-  Widget form(BuildContext context){
+  Widget changePaymentDataForm(BuildContext context) {
     TextEditingController paymentNumberController = TextEditingController();
     TextEditingController paymentAmountController = TextEditingController();
     AdminController adminController = Get.find<AdminController>();
@@ -376,7 +417,7 @@ class SettingsScreen extends StatelessWidget {
         ),
         const SizedBox(height: 20),
         Form(
-          key: formKey,
+          key: changePaymentDataFormKey,
           child: Column(
             children: [
               CustomSignInputField(
@@ -390,8 +431,7 @@ class SettingsScreen extends StatelessWidget {
                   if (val == null || val.trim() == '') {
                     return 'أكتب رقم هاتف صحيح';
                   }
-                  if (val.trim().length != 10 &&
-                      val.trim().length != 11) {
+                  if (val.trim().length != 10 && val.trim().length != 11) {
                     return 'رقم هاتف غير صالح';
                   }
                   return null;
@@ -458,22 +498,18 @@ class SettingsScreen extends StatelessWidget {
                   Expanded(
                     child: OutlinedButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                        MaterialStateProperty.all(buttonColor),
+                        backgroundColor: MaterialStateProperty.all(buttonColor),
                         foregroundColor:
-                        MaterialStateProperty.all(Colors.white),
+                            MaterialStateProperty.all(Colors.white),
                       ),
                       onPressed: () async {
-
-                        var formData = formKey.currentState;
+                        var formData = changePaymentDataFormKey.currentState;
                         if (formData!.validate()) {
-                          formKey.currentState!.save();
+                          changePaymentDataFormKey.currentState!.save();
                           Get.back();
                           showLoading(context);
-                          bool result =
-                          await adminController.changePaymentData(
-                            paymentNumber:
-                            paymentNumberController.text,
+                          bool result = await adminController.changePaymentData(
+                            paymentNumber: paymentNumberController.text.trim(),
                             paymentAmount: double.parse(
                               paymentAmountController.text,
                             ),
@@ -483,6 +519,113 @@ class SettingsScreen extends StatelessWidget {
                             showToast(
                               context,
                               'تم تغيير بيانات الدفع بنجاح',
+                              ToastStates.success,
+                            );
+                          } else {
+                            Get.back();
+                            showToast(
+                              context,
+                              'حدث خطأ أثناء حفظ البيانات يرجى'
+                              ' المحاوله لاحقًا',
+                              ToastStates.error,
+                            );
+                          }
+                        }
+                      },
+                      child: const Text('تم'),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    child: OutlinedButton(
+                      style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all(defaultColor),
+                      ),
+                      onPressed: () {
+                        if (isFree != adminController.isFree) {
+                          adminController.changeIsFree();
+                        }
+                        Get.back();
+                      },
+                      child: const Text('إلغاء'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// change connect email form
+  Widget changeConnectEmailForm(BuildContext context) {
+    TextEditingController emailController = TextEditingController();
+    emailController.text = adminController.adminDocument!.connectEmail;
+    late String email;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Center(
+          child: Text(
+            'تغيير البريد الإلكترونى الخاص بالتواصل',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        Form(
+          key: changeConnectEmailFormKey,
+          child: Column(
+            children: [
+              CustomSignInputField(
+                controller: emailController,
+                validator: (val) {
+                  if (val == null) {
+                    return "اكتب بريد الكترونى";
+                  }
+                  if(!EmailValidator.validate(val)){
+                    return "اكتب بريد الكترونى صالح";
+                  }
+                  return null;
+                },
+                onSaved: (value){
+                  email = value!;
+                },
+                icon: Icons.email,
+                hint: 'اكتب البريد اللإلكترونى الجديد',
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(buttonColor),
+                        foregroundColor:
+                        MaterialStateProperty.all(Colors.white),
+                      ),
+                      onPressed: () async {
+                        var formData = changeConnectEmailFormKey.currentState;
+                        if (formData!.validate()) {
+                          changeConnectEmailFormKey.currentState!.save();
+                          Get.back();
+                          showLoading(context);
+                          bool result = await adminController.changeConnectEmail(
+                            email: email,
+                          );
+                          if (result) {
+                            Get.back();
+                            showToast(
+                              context,
+                              'تم تغيير البريد الإلكترونى بنجاح',
                               ToastStates.success,
                             );
                           } else {
@@ -509,9 +652,6 @@ class SettingsScreen extends StatelessWidget {
                         MaterialStateProperty.all(defaultColor),
                       ),
                       onPressed: () {
-                        if (isFree != adminController.isFree) {
-                          adminController.changeIsFree();
-                        }
                         Get.back();
                       },
                       child: const Text('إلغاء'),
@@ -526,4 +666,3 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 }
-

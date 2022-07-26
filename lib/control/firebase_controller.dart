@@ -19,23 +19,28 @@ class FirebaseController extends GetxController {
   RxList foundPhones = [].obs;
   RxList needVerification = [].obs;
   String adminDocId = 'X8SwuPWCuaevsHVzH1gC';
-  getPhonesDocuments() async {
+  Future<bool> getPhonesDocuments() async {
     print('we are reading ');
-    await FirebaseFirestore.instance
-        .collection('phones')
-        .orderBy('time', descending: true)
-        .get()
-        .then((value) {
-      value.docs.forEach((doc) {
-        print('=============================');
-        print('we are in phone document');
-        print('=============================');
-        print(doc.data());
-        PhonesDocument phonesDocument =
-            PhonesDocument.fromJson(doc.data(), doc.id);
-        phonesDocuments.add(phonesDocument);
+    print('a firebase function has been called');
+    try {
+      await FirebaseFirestore.instance
+          .collection('phones')
+          .orderBy('time', descending: true)
+          .get()
+          .then((value) {
+        value.docs.forEach((doc) {
+          print('=============================');
+          print('we are in phone document');
+          print('=============================');
+          print(doc.data());
+          PhonesDocument phonesDocument =
+              PhonesDocument.fromJson(doc.data(), doc.id);
+          phonesDocuments.add(phonesDocument);
+        });
       });
-    });
+    } catch (e) {
+      return false;
+    }
     phonesDocuments.forEach((doc) {
       print('phone found document data');
       print('==========================');
@@ -58,9 +63,48 @@ class FirebaseController extends GetxController {
       // });
       print('end phone found document data');
     });
+    return true;
+  }
+
+  // adding a phone to firebase
+  Future<bool> addPhoneToFirebase(
+      Map<String, dynamic> newPhone, bool isLostPhone) async {
+    print('a firebase function has been called');
+    PhonesDocument lastDoc = phonesDocuments[0] as PhonesDocument;
+    int listLength = lastDoc.phonesData.length;
+
+    print(listLength);
+
+    try {
+      if (listLength < 2000) {
+        await phonesRef.doc(lastDoc.id).update({
+          'phones_list': FieldValue.arrayUnion([newPhone])
+        });
+      } else {
+        await phonesRef.add({
+          'time': lastDoc.time + 1,
+          'phones_list': FieldValue.arrayUnion([newPhone])
+        });
+
+        var lastDocRef =
+            await phonesRef.orderBy('time', descending: true).limit(1).get();
+        lastDocRef.docs.forEach((doc) {
+          String id = doc.id;
+          int time = doc['time'];
+          PhoneData phoneData = PhoneData.fromJson(doc['phones_list'][0]);
+          PhonesDocument phonesDocument =
+              PhonesDocument(id: id, time: time, phonesData: [phoneData]);
+          phonesDocuments.insert(0, phonesDocument);
+        });
+      }
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<AdminDocument?> getAdminDocument() async {
+    print('a firebase function has been called');
     try {
       AdminDocument? adminDocument;
 
@@ -81,6 +125,8 @@ class FirebaseController extends GetxController {
   }
 
   Future<bool> deletePhoneFromFirebase(String docId, PhoneData phone) async {
+    print('a firebase function has been called');
+
     bool imagesDeleted = await _deletePhoneImages(phone);
     if (imagesDeleted) {
       await phonesRef.doc(docId).update({
@@ -92,15 +138,21 @@ class FirebaseController extends GetxController {
     }
   }
 
-  deleteDocument(String docId) async {
+  Future<bool> deleteDocument(String docId) async {
+    print('a firebase function has been called');
+
     try {
       await phonesRef.doc(docId).delete();
+      return true;
     } catch (e) {
       print(e);
+      return false;
     }
   }
 
   Future<bool> verifyPhone(String docId, PhoneData phone) async {
+    print('a firebase function has been called');
+
     try {
       DocumentReference docRef = phonesRef.doc(docId);
       WriteBatch batch = FirebaseFirestore.instance.batch();
@@ -120,6 +172,8 @@ class FirebaseController extends GetxController {
   }
 
   Future<bool> _deletePhoneImages(PhoneData phone) async {
+    print('a firebase function has been called');
+
     for (String imageUrl in phone.imageUrls) {
       try {
         print('we are deleting $imageUrl');
@@ -144,6 +198,8 @@ class FirebaseController extends GetxController {
 
   /// add admin to firebase
   Future<bool> addAdmin(Map<String, dynamic> admin) async {
+    print('a firebase function has been called');
+
     try {
       await adminRef.doc(adminDocId).update({
         'admins_list': FieldValue.arrayUnion([admin])
@@ -156,6 +212,8 @@ class FirebaseController extends GetxController {
 
   /// delete admin from firebase
   Future<bool> deleteAdmin(AdminData admin) async {
+    print('a firebase function has been called');
+
     try {
       await adminRef.doc(adminDocId).update({
         'admins_list': FieldValue.arrayRemove([AdminData.toJson(admin).json])
@@ -168,8 +226,10 @@ class FirebaseController extends GetxController {
   }
 
   /// change payment data in firebase
-  changePaymentData(
+  Future<bool> changePaymentData(
       String paymentNumber, double paymentAmount, bool isFree) async {
+    print('a firebase function has been called');
+
     try {
       await adminRef.doc(adminDocId).update({
         'payment_number': paymentNumber,
@@ -186,6 +246,8 @@ class FirebaseController extends GetxController {
   /// add legal action article to firebase
   Future<bool> addLegalActionArticle(
       Map<String, dynamic> legalActionArticle) async {
+    print('a firebase function has been called');
+
     try {
       await adminRef.doc(adminDocId).update({
         'legal_actions_list': FieldValue.arrayUnion([legalActionArticle])
@@ -198,10 +260,27 @@ class FirebaseController extends GetxController {
 
   /// delete legal action article from firebase
   Future<bool> deleteLegalActionArticle(ArticleData legalActionArticle) async {
+    print('a firebase function has been called');
+
     try {
       await adminRef.doc(adminDocId).update({
         'legal_actions_list': FieldValue.arrayRemove(
             [ArticleData.toJson(legalActionArticle).json])
+      });
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  /// change payment data in firebase
+  Future<bool> changeConnectEmail(String email) async {
+    print('a firebase function has been called');
+
+    try {
+      await adminRef.doc(adminDocId).update({
+        'connect_email': email,
       });
       return true;
     } catch (e) {

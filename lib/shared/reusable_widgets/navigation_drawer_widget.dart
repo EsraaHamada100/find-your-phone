@@ -3,7 +3,7 @@ import 'package:find_your_phone/control/firebase_controller.dart';
 import 'package:find_your_phone/control/sign_controller.dart';
 import 'package:find_your_phone/shared/colors.dart';
 import 'package:find_your_phone/view/admin_screens/admins_screen.dart';
-import 'package:find_your_phone/view/how_to_use_our_app_scree.dart';
+import 'package:find_your_phone/view/how_to_use_our_app_screen.dart';
 import 'package:find_your_phone/view/profile.dart';
 import 'package:find_your_phone/view/support_us_screen.dart';
 import 'package:find_your_phone/view/admin_screens/verify_phones_screen.dart';
@@ -51,7 +51,7 @@ class CustomNavigationDrawerWidget extends StatelessWidget {
     return Drawer(
       // material do a good effect when you press in the listTile
       child: Material(
-        color: Colors.indigo[300],
+        color: _appController.isDark? darkColor2: Colors.indigo[300],
         child: ListView(
           padding: EdgeInsets.symmetric(horizontal: 20),
           children: <Widget>[
@@ -107,10 +107,10 @@ class CustomNavigationDrawerWidget extends StatelessWidget {
                   buildMenuItem(context,
                       text: 'المشرفون',
                       icon: Icons.admin_panel_settings, onClicked: () {
-                    _appController.changeDrawerIndex(2);
+                    _appController.changeDrawerIndex(3);
                     Get.off(() => AdminsScreen());
                     // Get.offAll(()=>Admin);
-                  }, index: 2),
+                  }, index: 3),
                 ],
               ),
             const SizedBox(
@@ -124,7 +124,7 @@ class CustomNavigationDrawerWidget extends StatelessWidget {
                 // _appController.changeDrawerIndex(3);
                 Get.to(() => LawScreen());
               },
-              index: 3,
+              index: 4,
             ),
             SizedBox(
               height: 16,
@@ -134,50 +134,58 @@ class CustomNavigationDrawerWidget extends StatelessWidget {
               text: 'إعدادات',
               icon: Icons.settings,
               onClicked: () {
-                _appController.changeDrawerIndex(4);
+                _appController.changeDrawerIndex(5);
                 Get.off(() => SettingsScreen());
-              },
-              index: 4,
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Divider(color: Colors.white70),
-            buildMenuItem(
-              context,
-              text: 'كيفية استخدام التطبيق',
-              icon: Icons.question_mark_outlined,
-              onClicked: () {
-                // _appController.changeDrawerIndex(4);
-                Get.to(() => HowToUseOurAppScreen());
               },
               index: 5,
             ),
             SizedBox(
               height: 16,
             ),
-            buildMenuItem(
-              context,
-              text: 'إدعمنا',
-              icon: Icons.monetization_on_rounded,
-              onClicked: () {
-                // _appController.changeDrawerIndex(5);
-                Get.to(() => SupportUsScreen());
-              },
-              index: 6,
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            buildMenuItem(
-              context,
-              text: 'تواصل معنا',
-              icon: Icons.monetization_on_rounded,
-              onClicked: () {
-                // _appController.changeDrawerIndex(5);
-                Get.to(() => ContactUsScreen());
-              },
-              index: 7,
+            if(!_adminController.isAdmin)
+            Column(
+              children: [
+                Divider(color: Colors.white70),
+                buildMenuItem(
+                  context,
+                  text: 'كيفية استخدام التطبيق',
+                  icon: Icons.question_mark_outlined,
+                  onClicked: () {
+                    // _appController.changeDrawerIndex(4);
+                    Get.to(() => HowToUseOurAppScreen());
+                  },
+                  index: 6,
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                buildMenuItem(
+                  context,
+                  text: 'إدعمنا',
+                  icon: Icons.monetization_on_rounded,
+                  onClicked: () {
+                    // _appController.changeDrawerIndex(5);
+                    Get.to(() => SupportUsScreen());
+                  },
+                  index: 7,
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                buildMenuItem(
+                  context,
+                  text: 'تواصل معنا',
+                  icon: Icons.monetization_on_rounded,
+                  onClicked: () {
+                    // _appController.changeDrawerIndex(5);
+                    Get.to(() => ContactUsScreen());
+                  },
+                  index: 8,
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+              ],
             ),
           ],
         ),
@@ -191,7 +199,8 @@ class CustomNavigationDrawerWidget extends StatelessWidget {
       required IconData icon,
       required VoidCallback onClicked,
       required int index}) {
-    const color = Colors.white;
+
+         const color = Colors.white ;
 
     return Container(
       decoration: BoxDecoration(
@@ -202,6 +211,7 @@ class CustomNavigationDrawerWidget extends StatelessWidget {
       ),
       child: ListTile(
         hoverColor: Colors.white70,
+       // hoverColor: Colors.black54,
         contentPadding: EdgeInsets.all(10),
         leading: Icon(
           icon,
@@ -233,7 +243,7 @@ class CustomNavigationDrawerWidget extends StatelessWidget {
         Get.to(
             () => UserProfileScreen(name: name, email: email, image: imageURL));
       },
-      child: Container(
+      child: Padding(
         padding: EdgeInsets.all(10),
         child: Row(
           children: [

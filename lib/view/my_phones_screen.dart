@@ -6,12 +6,15 @@ import 'package:find_your_phone/view/phone_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../control/app_controller.dart';
+import '../shared/colors.dart';
 import '../shared/reusable_widgets/phone_container.dart';
 
 class MyPhones extends StatelessWidget {
   MyPhones({Key? key}) : super(key: key);
   final FirebaseController _firebaseController = Get.find<FirebaseController>();
   final SignController _signController = Get.find<SignController>();
+  final  AppController _appController = Get.find<AppController>();
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -19,6 +22,7 @@ class MyPhones extends StatelessWidget {
       child: Scaffold(
         appBar: CustomTransparentAppBar(
           appBarTitle: 'منشوراتي',
+          backgroundColor: _appController.isDark? Colors.black54 : secondaryColor,
         ),
         body: SafeArea(
           child: Padding(
@@ -43,6 +47,7 @@ class MyPhones extends StatelessWidget {
                             );
                           },
                           child: PhoneContainer(
+                            phone: phone,
                             phoneType: phone.phoneType,
                             image: phone.imageUrls.isNotEmpty
                                 ? phone.imageUrls[0]
