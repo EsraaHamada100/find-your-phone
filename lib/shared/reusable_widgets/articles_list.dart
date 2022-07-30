@@ -137,9 +137,12 @@ class ArticlesScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      articlesList[index].title,
-                      style: Theme.of(context).textTheme.headline6,
+                    Expanded(
+                      child: Text(
+                        articlesList[index].title,
+                        style: Theme.of(context).textTheme.headline6,
+                        maxLines: 3,
+                      ),
                     ),
                     Icon(articlesList[index].isVisible
                         ? Icons.keyboard_arrow_down_outlined

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:device_preview/device_preview.dart';
 import 'package:find_your_phone/control/add_phone_controller.dart';
 import 'package:find_your_phone/control/admin_controller.dart';
 import 'package:find_your_phone/control/app_controller.dart';
@@ -56,7 +57,7 @@ Future<void> main() async {
     isLogin = false;
   }
 
-  runApp(MyApp());
+  runApp( MyApp());
 }
 
 class MyApp extends StatelessWidget {
